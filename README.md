@@ -16,7 +16,7 @@ If you desire to search for a specific disruption layout combination, select the
 In the **Settings** tab, the general settings allow for the window to be always on top, as well as an option do log events to a log file. Furthermore, a "Read from Start" option exists, which allows a fully completed run to be analyzed.
 
 ## Getting the app
-Message *@wtb_username* on Discord for the .exe file, or download the source files and use something like pyinstaller to create and executable file yourself, with a command such as `pyinstaller --icon=peepoHmm.ico --onefile --noconsole --add-data="peepoHmm.ico;." --add-data="discordLogo.png;." .\InspectorGadget.py`.
+Message *@wtb_username* on Discord for the .exe file, or download the source files and use something like pyinstaller to create an executable file yourself, with a command such as `pyinstaller --icon=peepoHmm.ico --onefile --noconsole --add-data="peepoHmm.ico;." --add-data="discordLogo.png;." .\InspectorGadget.py`.
 
 Alternatively, you can run the python file directly, requiring manual installation of missing modules.
 

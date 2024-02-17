@@ -176,6 +176,7 @@ def resetAnalyzerUI():
     missionNameDisplay.configure(text = StringConstants.replacedByMissionNameString, text_color = textColor)
 
     restartReadingButton.place(relx = columnRelValues[5], rely = lineRelValues[9], anchor = "center")
+    restartReadingText.place(relx = columnRelValues[5], rely = lineRelValues[9], anchor = "center")
 
     app.after(sleepBetweenCalls, startParsing)
 

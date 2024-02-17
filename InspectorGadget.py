@@ -673,6 +673,9 @@ class DisruptionRun:
     
         self.rounds = []
         self.runTimeStartInSeconds = 0
+        self.round45TimeEndInSeconds = 0
+        self.round45TimeDurationSeconds = 0
+        self.round45TimeDurationString = ""
         self.sumOfRoundTimesInSeconds = 0
         self.expectedRunTimeInSeconds = 0
 
@@ -854,7 +857,7 @@ def previousRound():
     if currentRoundShown > 1:
         currentRoundShown -= 1
 
-    updateDisruptionUIValues(currentRoundShown - 1)
+    updateDisruptionUIValues(currentRoundShown)
 
     disruptionRoundInputBox.delete('0.0', 'end')
     disruptionRoundInputBox.insert('end', currentRoundShown)
@@ -871,7 +874,7 @@ def nextRound():
     if currentRoundShown < len(disruptionRun.rounds):
         currentRoundShown += 1
 
-    updateDisruptionUIValues(currentRoundShown - 1)
+    updateDisruptionUIValues(currentRoundShown)
         
     disruptionRoundInputBox.delete('0.0', 'end')
     disruptionRoundInputBox.insert('end', currentRoundShown)
@@ -902,7 +905,7 @@ def updateRoundFromInput():
     disruptionRoundInputBox.delete('0.0', 'end')
     disruptionRoundInputBox.insert('end', currentRoundShown)
 
-    updateDisruptionUIValues(currentRoundShown - 1)
+    updateDisruptionUIValues(currentRoundShown)
 
     if loggingState:
         logging.info("Updating display round value based on input with value of " + str(currentRoundShown))
@@ -1022,7 +1025,7 @@ def updateDisruptionUIValues(runNumberToDisplay):
         logging.info("In updateDisruptionUIValues()")
 
     try:
-        roundToDisplay = disruptionRun.rounds[runNumberToDisplay]
+        roundToDisplay = disruptionRun.rounds[runNumberToDisplay - 1]
 
         key1Display.configure(text = roundToDisplay.keyInsertTimesString[0], text_color = textColor)
         key2Display.configure(text = roundToDisplay.keyInsertTimesString[1], text_color = textColor)
@@ -1376,10 +1379,10 @@ def scanDisruptionProgress():
                 disruptionCurrentRound = DisruptionRound()
                 disruptionCurrentRound.roundTimeStartInSeconds = float(trimmedTime)
 
-                currentRoundShown += 1
+                currentRoundShown = len(disruptionRun.rounds)
 
                 disruptionRoundInputBox.delete('0.0', 'end')
-                disruptionRoundInputBox.insert('end', currentRoundShown)
+                disruptionRoundInputBox.insert('end', len(disruptionRun.rounds))
 
                 cleanDisruptionUI()
                 currentKeysInserted = 0
@@ -1444,19 +1447,29 @@ def scanDisruptionProgress():
                 previousRoundTimeDisplay.configure(text = realTimeValue)
 
                 # Update expected 46 round end time. Stops updating after 46 reached
-                if len(disruptionRun.rounds) < 45:
+                if len(disruptionRun.rounds) < 45: 
                     roundsLeft = 45 - len(disruptionRun.rounds)
                     timeLeftSeconds = roundsLeft * float(float(averageRealTimeValueSeconds) + 20)
                     totalRunTimeExpectedSeconds = float(trimmedTime) - float(disruptionRun.runTimeStartInSeconds) + float(timeLeftSeconds)
                     totalRunTimeExpected = str(datetime.timedelta(seconds = totalRunTimeExpectedSeconds))[0:7]
                     expectedEndTimeDisplay.configure(text = totalRunTimeExpected)
 
+                elif len(disruptionRun.rounds) == 45:
+                    # Save 46 run time
+                    round45endTimeSeconds = disruptionRun.rounds[44].roundTimeStartInSeconds
+                    disruptionRun.round45TimeEndInSeconds = disruptionRun.runTimeStartInSeconds
+                    disruptionRun.round45TimeDurationSeconds = round45endTimeSeconds - disruptionRun.runTimeStartInSeconds
+                    disruptionRun.round45TimeDurationString = str(datetime.timedelta(seconds = disruptionRun.round45TimeDurationSeconds))[0:7]
+
+                    expectedEndTimeStringDisplay.configure(text = StringConstants.levelCapTimeString)
+                    expectedEndTimeDisplay.configure(text = disruptionRun.round45TimeDurationString)
+
                 # Check if round is best overall
                 if disruptionCurrentRound.totalRoundTimeInSeconds < disruptionRun.bestRunTime:
                     disruptionRun.bestRunTime = disruptionCurrentRound.totalRoundTimeInSeconds
                     disruptionRun.bestRunTimeString = realTimeValue
                     disruptionRun.bestRunTimeRoundNr = currentRoundShown
-                    extraString = " (r" + str(currentRoundShown + 1) + ")"
+                    extraString = " (r" + str(len(disruptionRun.rounds)) + ")"
                     bestRoundTimeDisplay.configure(text = realTimeValue + extraString)
 
             # Update total keys completed
@@ -1476,7 +1489,7 @@ def scanDisruptionProgress():
                 loggingState = True
 
                 # Update UI with last round info
-                updateDisruptionUIValues(len(disruptionRun.rounds) - 1)
+                updateDisruptionUIValues(len(disruptionRun.rounds))
 
                 break
 

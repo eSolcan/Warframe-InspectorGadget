@@ -75,6 +75,7 @@ class StringConstants:
     disruptionCurrentAverateString = "Current AVG:"
     disruptionExpectedEndString = "Expected end:"
     bestRoundTimeString = "Best round:"
+    levelCapTimeString = "LvlCap time:"
 
     disruptionDataDumpedString = "Run written to file disruptionFullRunData.json and chart created in new tab"
 

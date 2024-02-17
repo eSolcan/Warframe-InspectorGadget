@@ -176,7 +176,7 @@ def resetAnalyzerUI():
     missionNameDisplay.configure(text = StringConstants.replacedByMissionNameString, text_color = textColor)
 
     restartReadingButton.place(relx = columnRelValues[5], rely = lineRelValues[9], anchor = "center")
-    restartReadingText.place(relx = columnRelValues[5], rely = lineRelValues[9], anchor = "center")
+    restartReadingText.place(relx = columnRelValues[5], rely = lineRelValues[10] - .02, anchor = "center")
 
     app.after(sleepBetweenCalls, startParsing)
 
@@ -960,6 +960,7 @@ def updateUIForDisruptionLogging():
     missionNameDisplay.place_forget()
     foundTileDisplay.place_forget()
     whatIsBeingParsedDisplay.place_forget()
+    disruptionDataDumpedDisplay.place_forget()
 
     # Add new elements
     keyInsertsStringDisplay.place(relx = columnRelValuesDisruption[0], rely = lineRelValuesDisruption[0], anchor = "e")

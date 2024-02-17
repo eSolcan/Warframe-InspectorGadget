@@ -19,3 +19,9 @@ In the **Settings** tab, the general settings allow for the window to be always 
 Message *@wtb_username* on Discord for the .exe file, or download the source files and use something like pyinstaller to create and executable file yourself, with a command such as `pyinstaller --icon=peepoHmm.ico --onefile --noconsole --add-data="peepoHmm.ico;." --add-data="discordLogo.png;." .\InspectorGadget.py`.
 
 Alternatively, you can run the python file directly, requiring manual installation of missing modules.
+
+## Preview Images
+
+![SettingsTab](AppImages/SettingsTab.png?)
+![AnalyzerTab](AppImages/AnalyzerTab.png?)
+![ChartTab](AppImages/ChartTab.png?)

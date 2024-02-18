@@ -1456,7 +1456,7 @@ def scanDisruptionProgress():
 
                 elif len(disruptionRun.rounds) == 45:
                     # Save 46 run time
-                    round45endTimeSeconds = disruptionRun.rounds[44].roundTimeStartInSeconds
+                    round45endTimeSeconds = disruptionRun.rounds[44].roundTimeEndInSeconds
                     disruptionRun.round45TimeEndInSeconds = disruptionRun.runTimeStartInSeconds
                     disruptionRun.round45TimeDurationSeconds = round45endTimeSeconds - disruptionRun.runTimeStartInSeconds
                     disruptionRun.round45TimeDurationString = str(datetime.timedelta(seconds = disruptionRun.round45TimeDurationSeconds))[0:7]
@@ -1512,70 +1512,6 @@ def scanDisruptionProgress():
         app.after(sleepBetweenCalls, saveTimesAndDumpJson)
     else:
         app.after(sleepBetweenCalls, scanDisruptionProgress) 
-
-
-# def copeCope():
-#     global fileRollbackPosition
-#     global fileRollbackPositionSmall
-#     global restartReadingBool
-#     global loggingState 
-
-#     # Logging
-#     if loggingState:
-#         logging.info("In copeCope()")
-
-#     orbiterReset = False
-#     doneHere = False
-
-#     fileRollbackPositionSmall = file.tell()
-#     line = file.readline()  
-
-#     # If read line is faulty, rollback. Othewise, proceed with normal parsing
-#     if StringConstants.newLineString not in line or line == "":
-#         file.seek(fileRollbackPositionSmall)
-#     else:
-#         while StringConstants.newLineString in line:
-#             # Search for specific tiles
-#             if StringConstants.apolloMoonIntString in line:
-#                 print(line)
-#                 if StringConstants.apolloSpeed in line:
-#                     print("SPPPPPPEEEEEEEEEEEEEEEEDDDDDDDDDDDDDDDDDDDDDDDDD")
-
-#             # End of mission load, means all the layout has been parsed and found, will simply continue parsing until Orbiter Reset is found
-#             elif StringConstants.endOfMissionLoadString in line:
-#                 print("End of load")
-
-#             # Orbiter reset
-#             elif StringConstants.orbiterResetString in line:
-#                 # Save rollback point in case of required restart
-#                 fileRollbackPosition = file.tell()
-
-#                 orbiterReset = True
-                
-#                 print("Orbiter reset")
-#                 break
-
-#             # Save rollback point here. Check next line and decide what to do based on it
-#             try:
-#                 fileRollbackPositionSmall = file.tell()
-#                 line = file.readline()  
-#                 if StringConstants.newLineString not in line or line == "":
-#                     file.seek(fileRollbackPositionSmall)
-#                     break
-#             except:
-#                 logging.error("Error trying to readline\n")
-#                 file.seek(fileRollbackPosition)
-#                 break
-
-#     # Move to next parsing step based on previously found conditions
-#     if restartReadingBool:
-#         return
-#     elif orbiterReset:
-#         app.after(sleepBetweenCalls, resetDisplay) 
-#     elif doneHere:
-#         app.after(sleepBetweenCalls * 10, resetDisplay)
-#     else:
-#         app.after(sleepBetweenCalls, scanMissionLayout) 
 
 
 # Used to self-close the app in some occasions

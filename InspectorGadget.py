@@ -689,16 +689,18 @@ class DisruptionRun:
 class DisruptionRound:
     def __init__(self) -> None:
     
-        self.keyInsertTimes = [0,0,0,0]
-        self.demoKillTimes = [0,0,0,0]
+        # Raw values in seconds
+        self.keyInsertTimes = [None, None, None, None]
+        self.demoKillTimes = [None, None, None, None]
 
         self.roundTimeStartInSeconds = 0
         self.roundTimeEndInSeconds = 0
         self.totalRoundTimeInSeconds = 0
 
-        self.keyInsertTimesString = ["0","0","0","0"]
-        self.demoKillTimesString = ["0","0","0","0"]
-        self.totalRoundTimeInSecondsString = 0
+        # String values
+        self.keyInsertTimesString = [None, None, None, None]
+        self.demoKillTimesString = [None, None, None, None]
+        self.totalRoundTimeInSecondsString = None
 
 # Allows for serialization of other class, to convert to Json
 class DisruptionJsonEncoder(JSONEncoder):
@@ -1016,6 +1018,9 @@ def cleanDisruptionUI():
     demo3Display.configure(text = "", text_color = textColor)
     demo4Display.configure(text = "", text_color = textColor)
 
+    previousRoundTimeDisplay.configure(text = "", text_color = textColor)
+
+
 
 # Update disruption UI with values of a given set
 def updateDisruptionUIValues(runNumberToDisplay):
@@ -1027,6 +1032,8 @@ def updateDisruptionUIValues(runNumberToDisplay):
     try:
         roundToDisplay = disruptionRun.rounds[runNumberToDisplay - 1]
 
+        cleanDisruptionUI()
+
         key1Display.configure(text = roundToDisplay.keyInsertTimesString[0], text_color = textColor)
         key2Display.configure(text = roundToDisplay.keyInsertTimesString[1], text_color = textColor)
         key3Display.configure(text = roundToDisplay.keyInsertTimesString[2], text_color = textColor)
@@ -1037,7 +1044,8 @@ def updateDisruptionUIValues(runNumberToDisplay):
         demo3Display.configure(text = roundToDisplay.demoKillTimesString[2], text_color = textColor)
         demo4Display.configure(text = roundToDisplay.demoKillTimesString[3], text_color = textColor)
 
-        previousRoundTimeDisplay.configure(text = roundToDisplay.totalRoundTimeInSecondsString, text_color = textColor)
+        if roundToDisplay.totalRoundTimeInSecondsString != None:
+            previousRoundTimeDisplay.configure(text = roundToDisplay.totalRoundTimeInSecondsString, text_color = textColor)
     
     except:
         logging.error("Given run number is out of bounds of the array (too big, or too small)")
@@ -1271,8 +1279,6 @@ def scanDisruptionLayout():
                 tempLine = tempLine.rstrip()
                 disruptionTilesFoundList.append(tempLine)
 
-                # print(tempLine)
-
             # End of mission load, display tiles
             elif StringConstants.endOfMissionLoadString in line:
 
@@ -1354,6 +1360,7 @@ def scanDisruptionProgress():
         logging.info("In scanDisruptionProgress()")
 
     orbiterReset = False
+    toTheStart = False
 
     fileRollbackPositionSmall = file.tell()
     line = file.readline()  
@@ -1378,6 +1385,7 @@ def scanDisruptionProgress():
                 
                 disruptionCurrentRound = DisruptionRound()
                 disruptionCurrentRound.roundTimeStartInSeconds = float(trimmedTime)
+                disruptionRun.rounds.append(disruptionCurrentRound)
 
                 currentRoundShown = len(disruptionRun.rounds)
 
@@ -1434,7 +1442,7 @@ def scanDisruptionProgress():
 
                 disruptionCurrentRound.roundTimeEndInSeconds = float(trimmedTime)
                 disruptionCurrentRound.totalRoundTimeInSeconds = float(trimmedTime) - float(disruptionCurrentRound.roundTimeStartInSeconds)
-                disruptionRun.rounds.append(disruptionCurrentRound)
+                # disruptionRun.rounds.append(disruptionCurrentRound)
                 disruptionRun.sumOfRoundTimesInSeconds += disruptionCurrentRound.totalRoundTimeInSeconds
 
                 realTimeValue = str(datetime.timedelta(seconds = disruptionCurrentRound.totalRoundTimeInSeconds))[2:7]
@@ -1468,7 +1476,7 @@ def scanDisruptionProgress():
                 if disruptionCurrentRound.totalRoundTimeInSeconds < disruptionRun.bestRunTime:
                     disruptionRun.bestRunTime = disruptionCurrentRound.totalRoundTimeInSeconds
                     disruptionRun.bestRunTimeString = realTimeValue
-                    disruptionRun.bestRunTimeRoundNr = currentRoundShown
+                    disruptionRun.bestRunTimeRoundNr = len(disruptionRun.rounds)
                     extraString = " (r" + str(len(disruptionRun.rounds)) + ")"
                     bestRoundTimeDisplay.configure(text = realTimeValue + extraString)
 
@@ -1484,12 +1492,15 @@ def scanDisruptionProgress():
                 if loggingState:
                     logging.info("Orbiter reset -  Disruption")
 
-                # Re-enable logging state, incase something breaks while scrolling through rounds
-                loggingCheckBox.select()
-                loggingState = True
+                if len(disruptionRun.rounds) < 5:
+                    toTheStart = True
+                else:
+                    # Re-enable logging state, incase something breaks while scrolling through rounds
+                    loggingCheckBox.select()
+                    loggingState = True
 
-                # Update UI with last round info
-                updateDisruptionUIValues(len(disruptionRun.rounds))
+                    # Update UI with last round info
+                    updateDisruptionUIValues(len(disruptionRun.rounds))
 
                 break
 
@@ -1508,6 +1519,8 @@ def scanDisruptionProgress():
     # Move to next parsing step based on previously found conditions
     if restartReadingBool:
         return
+    elif toTheStart:
+        app.after(sleepBetweenCalls, resetAnalyzerUI)
     elif orbiterReset:
         app.after(sleepBetweenCalls, saveTimesAndDumpJson)
     else:

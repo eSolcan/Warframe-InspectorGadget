@@ -1082,11 +1082,12 @@ def startParsing():
     if file == None:
         file = open(filename, 'r', encoding='latin-1')
         
-    # Start from end of file
-    if parseFromEnd:
-        file.seek(0, 2)
-    else:
-        file.seek(0)
+        # Start from end of file
+        if parseFromEnd:
+            file.seek(0, 2)
+        else:
+            file.seek(0)
+    
 
     fileRollbackPosition = file.tell()
     fileRollbackPositionSmall = file.tell()
@@ -1487,7 +1488,6 @@ def scanDisruptionProgress():
 
             # Orbiter reset - extracts all round times and dumps to file. Also creates graph in new tab
             elif StringConstants.orbiterResetString in line:
-                orbiterReset = True
                 
                 if loggingState:
                     logging.info("Orbiter reset -  Disruption")
@@ -1495,6 +1495,8 @@ def scanDisruptionProgress():
                 if len(disruptionRun.rounds) < 5:
                     toTheStart = True
                 else:
+                    orbiterReset = True
+
                     # Re-enable logging state, incase something breaks while scrolling through rounds
                     loggingCheckBox.select()
                     loggingState = True

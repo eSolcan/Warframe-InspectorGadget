@@ -25,6 +25,8 @@ class StringConstants:
     kappa6 = "Six.level"
     kappa7 = "Seven.level"
     kappa8 = "Eight.level"
+    kappaList = [kappa1, kappa3, kappa4, kappa6, kappa7, kappa8]
+    kappaListForCheckbox = ["1", "3", "4", "6", "7", "8"]
 
     apolloMoonIntString = "I: /Lotus/Levels/OrokinMoon/MoonInt"
     apollo1 = "BotGarden.level"
@@ -34,6 +36,8 @@ class StringConstants:
     apollo5 = "Power.level"
     apollo6 = "RuinedPiaza.level"
     apollo7 = "Stealth.level"
+    apolloList = [apollo1, apollo2, apollo3, apollo4, apollo5, apollo6, apollo7]
+    apolloListForCheckbox = ["BotGarden", "Cloister", "Endurance", "HallsOfJudgement", "Power", "RuinedPiaza", "Stealth"]
 
     apolloSpeed = "Speed.level"
 

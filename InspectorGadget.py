@@ -1194,7 +1194,8 @@ def scanDisruptionProgress():
                     loggingCheckBox.select()
                     loggingState = True
 
-                    if disruptionRun.rounds[len(disruptionRun.rounds) - 1].keyInsertTimes[0] == None:
+                    # If last round was not finished, remove it from list of rounds
+                    if disruptionRun.rounds[len(disruptionRun.rounds) - 1].totalRoundTimeInSeconds == 0:
                         disruptionRun.rounds.pop()
                         currentRoundShown = len(disruptionRun.rounds)
 

@@ -16,7 +16,7 @@ from staticStrings import StringConstants
 
 # Logging status
 logging.basicConfig(filename = 'inspectorLog.log', encoding = 'utf-8', filemode='w', level = logging.DEBUG, format='%(asctime)s %(message)s')
-loggingState = False
+loggingState = True
 
 # Start parsing from end of file onwards
 parseFromEnd = True
@@ -92,7 +92,6 @@ innerWindowBox.place(relx = .5, rely = .01, anchor = tkinter.N)
 
 settingsWindow = innerWindowBox.add("Settings")  
 analyzerWindow = innerWindowBox.add("Analyzer")  
-# tilesWindow = innerWindowBox.add("Tiles")  
 chartWindow = None
 
 # Smaller inner window that contains discord tag
@@ -118,9 +117,9 @@ class DisruptionRun:
     
         self.rounds = []
         self.runTimeStartInSeconds = 0
-        self.round45TimeEndInSeconds = 0
-        self.round45TimeDurationSeconds = 0
-        self.round45TimeDurationString = ""
+        self.levelcapTimeEndInSeconds = 0
+        self.levelcapTimeDurationSeconds = 0
+        self.levelcapTimeDurationString = ""
         self.sumOfRoundTimesInSeconds = 0
         self.expectedRunTimeInSeconds = 0
 
@@ -204,7 +203,7 @@ def parseFromStartCheckBox_event():
         parseFromEnd = True
 
 parseFromStartCheckBox = customtkinter.CTkCheckBox(settingsWindow, 
-                                           text = "Read from start", 
+                                           text = "Parse full log\n(for finished runs)", 
                                            command = parseFromStartCheckBox_event, 
                                            variable = parseFromStartCheckBoxValue, 
                                            onvalue = "on", 
@@ -214,28 +213,28 @@ parseFromStartCheckBox = customtkinter.CTkCheckBox(settingsWindow,
 parseFromStartCheckBox.place(relx = columnRelValues[0] + .025, rely = lineRelValues[3], anchor = "w")
 
 # Logging checkbox
-loggingCheckBoxValue = customtkinter.StringVar(value = "off")
+# loggingCheckBoxValue = customtkinter.StringVar(value = "off")
 
-def loggingCheckBox_event():
-    global loggingState
+# def loggingCheckBox_event():
+#     global loggingState
 
-    if loggingState:
-        logging.info("Logging set to " + loggingCheckBoxValue.get())
+#     if loggingState:
+#         logging.info("Logging set to " + loggingCheckBoxValue.get())
 
-    if loggingCheckBoxValue.get() == "on":
-        loggingState = True
-    else:
-        loggingState = False
+#     if loggingCheckBoxValue.get() == "on":
+#         loggingState = True
+#     else:
+#         loggingState = False
 
-loggingCheckBox = customtkinter.CTkCheckBox(settingsWindow, 
-                                           text = "Enable logging", 
-                                           command = loggingCheckBox_event, 
-                                           variable = loggingCheckBoxValue, 
-                                           onvalue = "on", 
-                                           offvalue = "off", 
-                                           font = ("Arial", 14)
-                                           )
-loggingCheckBox.place(relx = columnRelValues[0] + .025, rely = lineRelValues[4], anchor = "w")
+# loggingCheckBox = customtkinter.CTkCheckBox(settingsWindow, 
+#                                            text = "Enable logging", 
+#                                            command = loggingCheckBox_event, 
+#                                            variable = loggingCheckBoxValue, 
+#                                            onvalue = "on", 
+#                                            offvalue = "off", 
+#                                            font = ("Arial", 14)
+#                                            )
+# loggingCheckBox.place(relx = columnRelValues[0] + .025, rely = lineRelValues[4], anchor = "w")
 
 # Restart reading button
 def restartReading():
@@ -447,7 +446,7 @@ def updateRoundFromInput():
     try:
         tempRound = int(disruptionRoundInputBox.get('1.0', "end-1c"))
     except:
-        logging.error("Given value is not a valid number (or not a number at all)")
+        logging.error("Given value for round is not a valid number (or not a number at all)")
 
     if tempRound > len(disruptionRun.rounds):
         currentRoundShown = len(disruptionRun.rounds)
@@ -521,7 +520,7 @@ def resetAnalyzerUI():
 
     # Logging
     if loggingState:
-        logging.info("In resetDisplay()")
+        logging.info("In resetAnalyzerUI()")
 
     # Update values
     restartReadingBool = False
@@ -534,7 +533,7 @@ def resetAnalyzerUI():
     try:
         innerWindowBox.delete("Chart")
     except:
-        logging.warning("Attempt to hide Chart window without it existing")
+        logging.warning("Attempt to remove Chart window without it existing")
 
     # Reset various variables
     currentRoundShown = -1
@@ -594,6 +593,9 @@ def updateUIForDisruptionLogging():
     disruptionRoundInputBox.place(relx = .5, rely = columnRelValuesDisruption[5], anchor = "c")
     updateFromInputButton.place(relx = .56, rely = columnRelValuesDisruption[5], anchor = "c")
 
+    if loggingState:
+        logging.info("updateUIForDisruptionLogging() finished, moving to scanDisruptionProgress()")
+
     app.after(sleepBetweenCalls, scanDisruptionProgress)
 
 
@@ -618,7 +620,7 @@ def updateDisruptionUIValues(runNumberToDisplay):
     global loggingState 
     
     if loggingState:
-        logging.info("In updateDisruptionUIValues()")
+        logging.info("In updateDisruptionUIValues() with run to display " + str(runNumberToDisplay))
 
     try:
         roundToDisplay = disruptionRun.rounds[runNumberToDisplay - 1]
@@ -651,6 +653,7 @@ def resetDisplay():
 
     foundTileDisplay.configure(text = StringConstants.waitingForMissionStart, text_color = textColor)
     missionNameDisplay.configure(text = StringConstants.replacedByMissionNameString, text_color = textColor)
+
     app.after(sleepBetweenCalls, scanMissionStart) 
 
 
@@ -753,8 +756,14 @@ def saveTimesAndDumpJson():
         lineChart.show_data(data = jsonClass.runTimesInSeconds, line = lineToDraw)
         lineChart.show_data(data = maxList, line = lineToDrawAbove)
         lineChart.show_data(data = minList, line = lineToDrawBellow)
+
+        if loggingState:
+            logging.info("Data dumped to file and chart drawn. Parsing stopped.")
+            logging.info("! ! ! THE END ! ! !")
+
     except:
         logging.error("Attempted to draw chart with no finished rounds")
+        
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -781,6 +790,8 @@ def startParsing():
         file.seek(0, 2)
     else:
         file.seek(0)
+        if loggingState:
+            logging.info("In startParsing() + started parsing from start of file")
     
     fileRollbackPosition = file.tell()
     fileRollbackPositionSmall = file.tell()
@@ -804,7 +815,6 @@ def scanMissionStart():
 
     doneHere = False
     scanDisruption = False
-    cope = False
 
     fileRollbackPositionSmall = file.tell()
     line = file.readline()  
@@ -828,10 +838,12 @@ def scanMissionStart():
                 # If doing disruption, will go to a different parser function
                 if any(x in line for x in StringConstants.disruptionMissionNames):
                     scanDisruption = True
-                # elif StringConstants.copernicusLua in line:
-                #     cope = True
                 else:
                     doneHere = True
+
+                if loggingState:
+                    logging.info("Found mission name in line. Moving to layout parsing. Line: " + line)
+
                 break
 
             # Save rollback point here. Check next line and decide what to do based on it
@@ -849,8 +861,6 @@ def scanMissionStart():
     # Move to next parsing step based on previously found conditions
     if restartReadingBool:
         return
-    # elif cope:
-    #     app.after(sleepBetweenCalls, copeCope) 
     elif doneHere:
         app.after(sleepBetweenCalls, scanMissionLayout) 
     elif scanDisruption:
@@ -886,13 +896,17 @@ def scanMissionLayout():
                 foundTileDisplay.configure(text = StringConstants.searchingTextFoundString, text_color = textColorGreen)
                 missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
 
-                logging.info(line)
+                if loggingState:
+                    logging.info("Found specific tile in line for mission " + currentMission + ". Line: " + line)
 
                 doneHere = True
                 break
 
             # End of mission load, means all the layout has been parsed and found, will simply continue parsing until Orbiter Reset is found
             elif StringConstants.endOfMissionLoadString in line:
+                if loggingState:
+                    logging.info("End of mission load found. Will await for mission reset.")
+
                 foundTileDisplay.configure(text = StringConstants.searchingTextNotFoundString, text_color = textColorRed)
 
             # Orbiter reset
@@ -902,7 +916,8 @@ def scanMissionLayout():
 
                 orbiterReset = True
                 
-                logging.info("Orbiter reset")
+                if loggingState:
+                    logging.info("Orbiter reset found. Line: " + line)
                 break
 
             # Save rollback point here. Check next line and decide what to do based on it
@@ -973,6 +988,9 @@ def scanDisruptionLayout():
                 tempLine = tempLine.rstrip()
                 disruptionTilesFoundList.append(tempLine)
 
+                if loggingState:
+                    logging.info("Found kappa tile in Line: " + line)
+
             # End of mission load, display tiles
             elif StringConstants.endOfMissionLoadString in line:
 
@@ -982,7 +1000,7 @@ def scanDisruptionLayout():
                 foundTileDisplay.configure(text = tile1 + " + " + tile2, text_color = textColor)
 
                 if loggingState:
-                    logging.info(disruptionTilesFoundList[0] + " " + disruptionTilesFoundList[1])
+                    logging.info("Disruption tiles found: " + disruptionTilesFoundList[0] + " " + disruptionTilesFoundList[1])
 
                 # If any of the selected bad tiles is found, display reset text
                 if any(x in badTileList for x in disruptionTilesFoundList):
@@ -996,8 +1014,7 @@ def scanDisruptionLayout():
                     disruptionRun = DisruptionRun()
 
                     # Stop logging, unlikely that anything breaks from here on out
-                    loggingCheckBox.deselect()
-                    loggingState = False
+                    # loggingCheckBox.deselect()
                     restartReadingText.place_forget()
                     restartReadingButton.place_forget()
 
@@ -1010,7 +1027,8 @@ def scanDisruptionLayout():
                 # Save rollback point in case of required restart
                 fileRollbackPosition = file.tell()
 
-                logging.info("Orbiter reset - " + currentMission)
+                if loggingState:
+                    logging.info("Orbiter reset found in disruption. Line: " + line)
                 break
 
             # Save rollback point here. Check next line and decide what to do based on it
@@ -1049,10 +1067,6 @@ def scanDisruptionProgress():
     global loggingState 
     global chartWindow 
 
-    # Logging
-    if loggingState:
-        logging.info("In scanDisruptionProgress()")
-
     orbiterReset = False
     toTheStart = False
 
@@ -1066,14 +1080,20 @@ def scanDisruptionProgress():
         while StringConstants.newLineString in line:
 
             # Search for various milestones along each round
-            # Run start. Will save start of mission time (after door hack)
-            if StringConstants.disruptionIntroDoorUnlockedString in line:
-                lineTime = line.split(StringConstants.scriptString, 1)[0]
+            # Run time start
+            if StringConstants.disruptionRunStartString in line:
+                if loggingState:
+                    logging.info("Disruption run start found in Line: " + line)
+
+                lineTime = line.split(StringConstants.netInfoString, 1)[0]
                 trimmedTime = re.sub(r'[^0-9.]', '', lineTime)
                 disruptionRun.runTimeStartInSeconds = float(trimmedTime)
-            
+
             # Round begin - create new disruption round
-            elif StringConstants.disruptionRoundStartedString in line:            
+            elif StringConstants.disruptionRoundStartedString in line:    
+                if loggingState:
+                    logging.info("New disruption round found in Line: " + line)
+
                 lineTime = line.split(StringConstants.scriptString, 1)[0]
                 trimmedTime = re.sub(r'[^0-9.]', '', lineTime)
                 
@@ -1157,14 +1177,20 @@ def scanDisruptionProgress():
                     expectedEndTimeDisplay.configure(text = totalRunTimeExpected)
 
                 elif len(disruptionRun.rounds) == 45:
+                    if loggingState:
+                        logging.info("Levelcap reached. Saving relevant information. Levelcap Line: " + line)
+
                     # Save 46 run time
-                    round45endTimeSeconds = disruptionRun.rounds[44].roundTimeEndInSeconds
-                    disruptionRun.round45TimeEndInSeconds = disruptionRun.runTimeStartInSeconds
-                    disruptionRun.round45TimeDurationSeconds = round45endTimeSeconds - disruptionRun.runTimeStartInSeconds
-                    disruptionRun.round45TimeDurationString = str(datetime.timedelta(seconds = disruptionRun.round45TimeDurationSeconds))[0:7]
+                    levelcapEndTimeSeconds = disruptionRun.rounds[44].roundTimeEndInSeconds
+                    disruptionRun.levelcapTimeEndInSeconds = levelcapEndTimeSeconds
+                    disruptionRun.levelcapTimeDurationSeconds = levelcapEndTimeSeconds - disruptionRun.runTimeStartInSeconds
+                    if disruptionRun.levelcapTimeDurationSeconds < 3600:
+                        disruptionRun.levelcapTimeDurationString = str(datetime.timedelta(seconds = disruptionRun.levelcapTimeDurationSeconds))[2:11]
+                    else:
+                        disruptionRun.levelcapTimeDurationString = str(datetime.timedelta(seconds = disruptionRun.levelcapTimeDurationSeconds))[0:11]
 
                     expectedEndTimeStringDisplay.configure(text = StringConstants.levelCapTimeString)
-                    expectedEndTimeDisplay.configure(text = disruptionRun.round45TimeDurationString)
+                    expectedEndTimeDisplay.configure(text = disruptionRun.levelcapTimeDurationString)
 
                 # Check if round is best overall
                 if disruptionCurrentRound.totalRoundTimeInSeconds < disruptionRun.bestRunTime:
@@ -1183,16 +1209,15 @@ def scanDisruptionProgress():
             elif StringConstants.orbiterResetString in line:
                 
                 if loggingState:
-                    logging.info("Orbiter reset -  Disruption")
+                    logging.info("Orbiter reset -  Disruption. Line: " + line)
 
                 if len(disruptionRun.rounds) < 5:
                     toTheStart = True
                 else:
                     orbiterReset = True
 
-                    # Re-enable logging state, incase something breaks while scrolling through rounds
-                    loggingCheckBox.select()
-                    loggingState = True
+                    if loggingState:
+                        logging.info("Last disruption round not finished, removing from list of rounds.")
 
                     # If last round was not finished, remove it from list of rounds
                     if disruptionRun.rounds[len(disruptionRun.rounds) - 1].totalRoundTimeInSeconds == 0:

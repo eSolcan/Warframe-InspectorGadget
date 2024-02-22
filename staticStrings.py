@@ -69,6 +69,7 @@ class StringConstants:
     disruptionDefenseFinishedString = "SentientArtifactMission.lua: Disruption: Completed defense for artifact"
     disruptionDefenseFailedString = "SentientArtifactMission.lua: Disruption: Failed defense for artifact"
     disruptionTotalKeysCompleted = "SentientArtifactMission.lua: Disruption: Total artifacts complete so far this mission:"
+    disruptionRunStartString = "Net [Info]: **** Starting session on HOST"
 
     disruptionRoundStartedString = "SentientArtifactMission.lua: ModeState = 3"
     disruptionRoundFinishedString = "SentientArtifactMission.lua: ModeState = 4"
@@ -84,6 +85,8 @@ class StringConstants:
     disruptionDataDumpedString = "Run written to file disruptionFullRunData.json and chart created in new tab"
 
     scriptString = "Script"
+    sysInfoString = "Sys [Info]"
+    netInfoString = "Net [Info]"
 
     generalSettingsString = "General Settings"
 

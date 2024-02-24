@@ -72,6 +72,8 @@ class FullParser:
         self.disruptionRun = None
         self.disruptionCurrentRound = None
 
+        self.cascadeTilesFound = []
+
     # Open url in web browser
     def openInBrowser(url):
         webbrowser.open_new_tab(url)
@@ -224,9 +226,11 @@ class FullParser:
             logging.info("In scanMissionStart()")
 
         self.disruptionTilesFoundList.clear()
+        self.cascadeTilesFound.clear()
 
         doneHere = False
         scanDisruption = False
+        scanCascade = False
 
         self.fileRollbackPositionSmall = self.file.tell()
         line = self.file.readline()  
@@ -250,6 +254,8 @@ class FullParser:
                     # If doing disruption, will go to a different parser function
                     if any(x in line for x in StringConstants.disruptionMissionNames):
                         scanDisruption = True
+                    elif StringConstants.tuvulCommonsZariman in line:
+                        scanCascade = True
                     else:
                         doneHere = True
 
@@ -277,6 +283,8 @@ class FullParser:
             self.app.after(self.sleepBetweenCalls, self.scanMissionLayout) 
         elif scanDisruption:
             self.app.after(self.sleepBetweenCalls, self.scanDisruptionLayout) 
+        elif scanCascade:
+            self.app.after(self.sleepBetweenCalls, self.scanCascadeLayout) 
         else:
             self.app.after(self.sleepBetweenCalls, self.scanMissionStart) 
 
@@ -347,6 +355,97 @@ class FullParser:
             self.app.after(self.sleepBetweenCalls * 10, self.appUI.resetDisplay)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanMissionLayout) 
+
+
+    # Start scanning for mission layout in Kappa
+    def scanCascadeLayout(self):
+        # Logging
+        if self.loggingState:
+            logging.info("In scanCascadeLayout()")
+
+        orbiterReset = False
+        doneHere = False
+
+        self.fileRollbackPositionSmall = self.file.tell()
+        line = self.file.readline()  
+
+        # If read line is faulty, rollback. Othewise, proceed with normal parsing
+        if StringConstants.newLineString not in line or line == "":
+            self.file.seek(self.fileRollbackPositionSmall)
+        else:
+            while StringConstants.newLineString in line:
+                # Search for tiles, will find the two main rooms of the tileset
+                if StringConstants.tuvulCommonsIntString in line:            
+                    tempLine = line.split(StringConstants.tuvulCommonsIntString, 1)[1]
+                    tempLine = tempLine.rstrip()
+                    self.cascadeTilesFound.append(tempLine)
+
+                    if self.loggingState:
+                        logging.info("Found cascade tile in Line: " + line)
+
+                # End of mission load, display tiles
+                elif StringConstants.endOfMissionLoadStringCascade in line:
+                    sumOfTiles = ""
+                    
+                    for x in self.cascadeTilesFound:
+                        # Check if layout has 5
+                        if x == StringConstants.cascadeShuttleBay: 
+                            sumOfTiles = sumOfTiles + "5"
+                        
+                        # Check if layout has 4
+                        elif x in StringConstants.cascadeListOf4:
+                            sumOfTiles = sumOfTiles + "4"
+                    
+                        elif x in StringConstants.cascadeListOf3:
+                            sumOfTiles = sumOfTiles + "3"
+                            
+                    if len(sumOfTiles) == 3 and "5" in sumOfTiles:
+                        self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
+                        self.appUI.foundTileDisplay.configure(text = sumOfTiles, text_color = self.appUI.textColorGreen)
+    
+                        doneHere = True
+                    else:
+                        self.appUI.foundTileDisplay.configure(text = sumOfTiles + " - Reset", text_color = self.appUI.textColorRed)
+
+                    if self.loggingState:
+                        logging.info("Cascade tiles found: " + self.cascadeTilesFound[0] + " " + self.cascadeTilesFound[1] + " " + self.cascadeTilesFound[2])
+
+                    break 
+
+                # Orbiter reset
+                elif StringConstants.orbiterResetString in line:
+                    orbiterReset = True
+
+                    self.cascadeTilesFound.clear()
+
+                    # Save rollback point in case of required restart
+                    self.fileRollbackPosition = self.file.tell()
+
+                    if self.loggingState:
+                        logging.info("Orbiter reset found in disruption. Line: " + line)
+                    break
+
+                # Save rollback point here. Check next line and decide what to do based on it
+                try:
+                    self.fileRollbackPositionSmall = self.file.tell()
+                    line = self.file.readline()  
+                    if StringConstants.newLineString not in line or line == "":
+                        self.file.seek(self.fileRollbackPositionSmall)
+                        break
+                except:
+                    logging.error("Error trying to readline\n")
+                    self.file.seek(self.fileRollbackPosition)
+                    break
+
+        # Move to next parsing step based on previously found conditions
+        if self.restartReadingBool:
+            return 
+        elif orbiterReset:
+            self.app.after(self.sleepBetweenCalls, self.appUI.resetDisplay) 
+        elif doneHere:
+            self.app.after(self.sleepBetweenCalls * 10, self.appUI.resetDisplay)
+        else:
+            self.app.after(self.sleepBetweenCalls, self.scanCascadeLayout) 
 
 
     # Start scanning for mission layout in Kappa

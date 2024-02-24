@@ -48,7 +48,7 @@ class AppUI:
 
         self.app = app
 
-        self.kappaRegBadList = [StringConstants.kappa3, StringConstants.kappa7]
+        self.kappaRegBadList = [StringConstants.kappa3, StringConstants.kappa4]
         self.apolloRegBadList = [StringConstants.apollo6]
 
         # Tab list
@@ -135,9 +135,9 @@ class AppUI:
         # Checkboxes for each of the possible main tiles - Kappa
         self.kappa1CheckBoxValue = customtkinter.StringVar(value = "off")
         self.kappa3CheckBoxValue = customtkinter.StringVar(value = "on")
-        self.kappa4CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.kappa4CheckBoxValue = customtkinter.StringVar(value = "on")
         self.kappa6CheckBoxValue = customtkinter.StringVar(value = "off")
-        self.kappa7CheckBoxValue = customtkinter.StringVar(value = "on")
+        self.kappa7CheckBoxValue = customtkinter.StringVar(value = "off")
         self.kappa8CheckBoxValue = customtkinter.StringVar(value = "off")
         self.kappaCheckValuesList = [self.kappa1CheckBoxValue, self.kappa3CheckBoxValue, self.kappa4CheckBoxValue, self.kappa6CheckBoxValue, self.kappa7CheckBoxValue, self.kappa8CheckBoxValue]
         self.kappaCheckboxes = []
@@ -325,6 +325,9 @@ class AppUI:
 
     # Function for adding/removeing bad tile of kappa based on checkbox that called the update func
     def updateCheckboxValueKappa(self, checkboxToUpdate):
+        if self.fullParser.loggingState:
+            logging.info("Updating checkbox value of kappa " + StringConstants.kappaList[checkboxToUpdate])
+
         if self.kappaCheckValuesList[checkboxToUpdate].get() == "on": 
             self.kappaRegBadList.append(StringConstants.kappaList[checkboxToUpdate])
         else:
@@ -332,6 +335,9 @@ class AppUI:
     
     # Add/remove bad tile of apollo based on checkbox that called the update func
     def updateCheckboxValueApollo(self, checkboxToUpdate):
+        if self.fullParser.loggingState:
+            logging.info("Updating checkbox value of apollo " + StringConstants.apolloList[checkboxToUpdate])
+
         if self.apolloCheckValuesList[checkboxToUpdate].get() == "on": 
             self.apolloRegBadList.append(StringConstants.apolloList[checkboxToUpdate])
         else:

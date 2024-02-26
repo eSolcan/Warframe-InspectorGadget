@@ -24,6 +24,9 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+def openInBrowser(url):
+    webbrowser.open_new_tab(url)
+
 class AppUI:
 
     # Text colors
@@ -48,7 +51,7 @@ class AppUI:
 
         self.app = app
 
-        self.kappaRegBadList = [StringConstants.kappa3, StringConstants.kappa4]
+        self.kappaRegBadList = [StringConstants.kappa3, StringConstants.kappa4, StringConstants.kappa6]
         self.apolloRegBadList = [StringConstants.apollo6]
 
         # Tab list
@@ -136,7 +139,7 @@ class AppUI:
         self.kappa1CheckBoxValue = customtkinter.StringVar(value = "off")
         self.kappa3CheckBoxValue = customtkinter.StringVar(value = "on")
         self.kappa4CheckBoxValue = customtkinter.StringVar(value = "on")
-        self.kappa6CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.kappa6CheckBoxValue = customtkinter.StringVar(value = "on")
         self.kappa7CheckBoxValue = customtkinter.StringVar(value = "off")
         self.kappa8CheckBoxValue = customtkinter.StringVar(value = "off")
         self.kappaCheckValuesList = [self.kappa1CheckBoxValue, self.kappa3CheckBoxValue, self.kappa4CheckBoxValue, self.kappa6CheckBoxValue, self.kappa7CheckBoxValue, self.kappa8CheckBoxValue]
@@ -149,7 +152,7 @@ class AppUI:
                                                             cursor = "hand2"
                                                             )
         self.selectBadTilesKappaDisplay.place(relx = self.columnRelValues[4], rely = self.lineRelValues[1], anchor = "center")
-        self.selectBadTilesKappaDisplay.bind("<Button-1>", lambda e:self.fullParser.openInBrowser("https://imgur.com/a/cKyEWnp"))
+        self.selectBadTilesKappaDisplay.bind("<Button-1>", lambda e:openInBrowser("https://imgur.com/a/cKyEWnp"))
 
         # Create checkboxes for all kappa tiles
         i = 0
@@ -187,7 +190,7 @@ class AppUI:
                                                              cursor = "hand2"
                                                              )
         self.selectBadTilesApolloDisplay.place(relx = self.columnRelValues[6], rely = self.lineRelValues[1], anchor = "center")
-        self.selectBadTilesApolloDisplay.bind("<Button-1>", lambda e:self.fullParser.openInBrowser("https://imgur.com/a/cKyEWnp"))
+        self.selectBadTilesApolloDisplay.bind("<Button-1>", lambda e:openInBrowser("https://imgur.com/a/cKyEWnp"))
 
         # Create checkboxes for all apollo tiles
         i = 0

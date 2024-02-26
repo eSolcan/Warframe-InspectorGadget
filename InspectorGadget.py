@@ -569,7 +569,7 @@ class FullParser:
                     if self.loggingState:
                         logging.info("Disruption run start found in Line: " + line)
 
-                    lineTime = line.split(StringConstants.netInfoString, 1)[0]
+                    lineTime = line.split(StringConstants.scriptString, 1)[0]
                     trimmedTime = re.sub(r'[^0-9.]', '', lineTime)
                     self.disruptionRun.runTimeStartInSeconds = float(trimmedTime)
 

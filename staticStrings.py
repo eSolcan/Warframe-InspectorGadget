@@ -109,7 +109,8 @@ class StringConstants:
     disruptionDefenseFinishedString = "SentientArtifactMission.lua: Disruption: Completed defense for artifact"
     disruptionDefenseFailedString = "SentientArtifactMission.lua: Disruption: Failed defense for artifact"
     disruptionTotalKeysCompleted = "SentientArtifactMission.lua: Disruption: Total artifacts complete so far this mission:"
-    disruptionRunStartString = "Net [Info]: **** Starting session on HOST"
+    # disruptionRunStartString = "Net [Info]: **** Starting session on HOST"
+    disruptionRunStartString = "Script [Info]: NemesisMission.lua: NemesisGenerator::InitMission"
 
     disruptionRoundStartedString = "SentientArtifactMission.lua: ModeState = 3"
     disruptionRoundFinishedString = "SentientArtifactMission.lua: ModeState = 4"

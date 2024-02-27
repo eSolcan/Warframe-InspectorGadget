@@ -59,6 +59,7 @@ class FullParser:
         self.app.title("InspectorGadget")
         self.app.iconbitmap(appLogo)
         self.app.attributes('-topmost', True)
+        # self.app.attributes('-alpha', 0.5)
 
         # Class that manages all UI elements
         self.appUI = AppUI(self, self.app)
@@ -234,7 +235,8 @@ class FullParser:
 
         self.fileRollbackPositionSmall = self.file.tell()
         line = self.file.readline()  
-
+        if self.loggingState:
+            logging.info(line)
         # If read line is faulty, rollback. Othewise, proceed with normal parsing
         if StringConstants.newLineString not in line or line == "":
             self.file.seek(self.fileRollbackPositionSmall)
@@ -469,6 +471,9 @@ class FullParser:
         elif StringConstants.apolloLua in self.currentMission:
             currentMissionTileString = StringConstants.apolloMoonIntString
             badTileList = self.appUI.apolloRegBadList
+        elif StringConstants.olympusMars in self.currentMission:
+            currentMissionTileString = StringConstants.olympusCmpString
+            badTileList = self.appUI.olympusRegBadList
         else:
             return
 
@@ -484,7 +489,7 @@ class FullParser:
                     self.disruptionTilesFoundList.append(tempLine)
 
                     if self.loggingState:
-                        logging.info("Found kappa tile in Line: " + line)
+                        logging.info("Found disruption tile in Line: " + line)
 
                 # End of mission load, display tiles
                 elif StringConstants.endOfMissionLoadString in line:

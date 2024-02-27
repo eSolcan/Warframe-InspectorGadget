@@ -53,6 +53,7 @@ class AppUI:
 
         self.kappaRegBadList = [StringConstants.kappa3, StringConstants.kappa4, StringConstants.kappa6]
         self.apolloRegBadList = [StringConstants.apollo6]
+        self.olympusRegBadList = [StringConstants.olympus3, StringConstants.olympus4]
 
         # Tab list
         self.innerWindowBox = customtkinter.CTkTabview(app, width = app._current_width - 20, height = app._current_height - 20)
@@ -210,6 +211,53 @@ class AppUI:
 
             i += 1
 
+        # Checkboxes for each of the possible main tiles - Olympus
+        self.olympus1CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympus2CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympus5CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympus6CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympus10CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympus11CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympusAssCheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympusConnCheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympusCheckValuesList = [self.olympus1CheckBoxValue, 
+                                       self.olympus2CheckBoxValue, 
+                                       self.olympus5CheckBoxValue, 
+                                       self.olympus6CheckBoxValue, 
+                                       self.olympus10CheckBoxValue, 
+                                       self.olympus11CheckBoxValue, 
+                                       self.olympusAssCheckBoxValue, 
+                                       self.olympusConnCheckBoxValue
+                                       ]
+        self.olympusCheckboxes = []
+
+        self.selectBadTilesOlympusDisplay = customtkinter.CTkLabel(self.settingsWindow, 
+                                                            text = StringConstants.selectBadTilesOlympusString, 
+                                                            text_color = self.textColorHyperlink, 
+                                                            font = ("Arial", 18), 
+                                                            cursor = "hand2"
+                                                            )
+        self.selectBadTilesOlympusDisplay.place(relx = self.columnRelValues[8], rely = self.lineRelValues[1], anchor = "center")
+        self.selectBadTilesOlympusDisplay.bind("<Button-1>", lambda e:openInBrowser("https://imgur.com/a/cKyEWnp"))
+
+        # Create checkboxes for all olympus tiles
+        i = 0
+        for x in self.olympusCheckValuesList:
+            newCheckbox = customtkinter.CTkCheckBox(self.settingsWindow, 
+                                                text = StringConstants.olympusListForCheckbox[i], 
+                                                command = lambda i = i: self.updateCheckboxValueOlympus(i), 
+                                                variable = self.olympusCheckValuesList[i], 
+                                                onvalue = "on", 
+                                                offvalue = "off", 
+                                                font = ("Arial", 14),
+                                                width = 20
+                                                )
+            
+            self.olympusCheckboxes.append(newCheckbox)
+            newCheckbox.place(relx = self.columnRelValues[8] - .025, rely = self.lineRelValues[i + 2], anchor = "w")
+
+            i += 1
+
         # UI elements for disruption
         self.keyInsertsStringDisplay = customtkinter.CTkLabel(self.analyzerWindow, text = StringConstants.disruptionKeyInsertsStaticString, text_color = self.textColor, font = ("Arial", 24))
         self.demoKillsStringDisplay = customtkinter.CTkLabel(self.analyzerWindow, text = StringConstants.disruptionDemoKillsString, text_color = self.textColor, font = ("Arial", 24))
@@ -329,7 +377,7 @@ class AppUI:
     # Function for adding/removeing bad tile of kappa based on checkbox that called the update func
     def updateCheckboxValueKappa(self, checkboxToUpdate):
         if self.fullParser.loggingState:
-            logging.info("Updating checkbox value of kappa " + StringConstants.kappaList[checkboxToUpdate])
+            logging.info("Updating checkbox value of Kappa " + StringConstants.kappaList[checkboxToUpdate])
 
         if self.kappaCheckValuesList[checkboxToUpdate].get() == "on": 
             self.kappaRegBadList.append(StringConstants.kappaList[checkboxToUpdate])
@@ -339,12 +387,22 @@ class AppUI:
     # Add/remove bad tile of apollo based on checkbox that called the update func
     def updateCheckboxValueApollo(self, checkboxToUpdate):
         if self.fullParser.loggingState:
-            logging.info("Updating checkbox value of apollo " + StringConstants.apolloList[checkboxToUpdate])
+            logging.info("Updating checkbox value of Apollo " + StringConstants.apolloList[checkboxToUpdate])
 
         if self.apolloCheckValuesList[checkboxToUpdate].get() == "on": 
             self.apolloRegBadList.append(StringConstants.apolloList[checkboxToUpdate])
         else:
             self.apolloRegBadList.remove(StringConstants.apolloList[checkboxToUpdate])
+
+    # Add/remove bad tile of olympus based on checkbox that called the update func
+    def updateCheckboxValueOlympus(self, checkboxToUpdate):
+        if self.fullParser.loggingState:
+            logging.info("Updating checkbox value of Olympus " + StringConstants.olympusList[checkboxToUpdate])
+
+        if self.olympusCheckValuesList[checkboxToUpdate].get() == "on": 
+            self.olympusRegBadList.append(StringConstants.olympusList[checkboxToUpdate])
+        else:
+            self.olympusRegBadList.remove(StringConstants.olympusList[checkboxToUpdate])
 
     # Function called by next round button, changes UI values to next round's
     def previousRound(self):       

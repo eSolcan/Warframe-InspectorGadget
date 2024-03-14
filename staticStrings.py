@@ -59,7 +59,7 @@ class StringConstants:
     olympusAss = "Assassinate.level"
     olympusConn3 = "Connector03.level"
     olympusList = [olympus1, olympus2, olympus5, olympus6, olympus10, olympus11, olympusAss, olympusConn3]
-    olympusListForCheckbox = ["01", "02", "03", "04", "05", "06", "10", "11", "Ass", "Conn"]
+    olympusListForCheckbox = ["01", "02", "05", "06", "10", "11", "Ass", "Conn"]
 
     # Cascade strings
     tuvulCommonsIntString = "I: /Lotus/Levels/Zariman/Int"

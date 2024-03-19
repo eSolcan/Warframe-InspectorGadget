@@ -17,6 +17,8 @@ from AppUI import AppUI
 
 class FullParser:
     def __init__(self) -> None:
+        self.currentMissionTileString = None
+        self.badTileList = None
 
         # Logging status
         logging.basicConfig(filename = 'inspectorLog.log', encoding = 'utf-8', filemode='w', level = logging.DEBUG, format='%(asctime)s %(message)s')
@@ -255,6 +257,18 @@ class FullParser:
 
                     # If doing disruption, will go to a different parser function
                     if any(x in line for x in StringConstants.disruptionMissionNames):
+                        if StringConstants.kappaSedna in self.currentMission:
+                            self.currentMissionTileString = StringConstants.kappaGrineerIntermediateString
+                            self.badTileList = self.appUI.kappaRegBadList
+                        elif StringConstants.apolloLua in self.currentMission:
+                            self.currentMissionTileString = StringConstants.apolloMoonIntString
+                            self.badTileList = self.appUI.apolloRegBadList
+                        elif StringConstants.olympusMars in self.currentMission:
+                            self.currentMissionTileString = StringConstants.olympusCmpString
+                            self.badTileList = self.appUI.olympusRegBadList
+                        else:
+                            return
+
                         scanDisruption = True
                     elif StringConstants.tuvulCommonsZariman in line:
                         scanCascade = True
@@ -462,29 +476,14 @@ class FullParser:
         self.fileRollbackPositionSmall = self.file.tell()
         line = self.file.readline()  
 
-        currentMissionTileString = ""
-        badTileList = None
-        
-        if StringConstants.kappaSedna in self.currentMission:
-            currentMissionTileString = StringConstants.kappaGrineerIntermediateString
-            badTileList = self.appUI.kappaRegBadList
-        elif StringConstants.apolloLua in self.currentMission:
-            currentMissionTileString = StringConstants.apolloMoonIntString
-            badTileList = self.appUI.apolloRegBadList
-        elif StringConstants.olympusMars in self.currentMission:
-            currentMissionTileString = StringConstants.olympusCmpString
-            badTileList = self.appUI.olympusRegBadList
-        else:
-            return
-
         # If read line is faulty, rollback. Othewise, proceed with normal parsing
         if StringConstants.newLineString not in line or line == "":
             self.file.seek(self.fileRollbackPositionSmall)
         else:
             while StringConstants.newLineString in line:
                 # Search for tiles, will find the two main rooms of the tileset
-                if currentMissionTileString in line:            
-                    tempLine = line.split(currentMissionTileString, 1)[1]
+                if self.currentMissionTileString in line:            
+                    tempLine = line.split(self.currentMissionTileString, 1)[1]
                     tempLine = tempLine.rstrip()
                     self.disruptionTilesFoundList.append(tempLine)
 
@@ -503,7 +502,7 @@ class FullParser:
                         logging.info("Disruption tiles found: " + self.disruptionTilesFoundList[0] + " " + self.disruptionTilesFoundList[1])
 
                     # If any of the selected bad tiles is found, display reset text
-                    if any(x in badTileList for x in self.disruptionTilesFoundList):
+                    if any(x in self.badTileList for x in self.disruptionTilesFoundList):
                         self.appUI.missionNameDisplay.configure(text = StringConstants.kappaShouldResetString, text_color = self.appUI.textColorRed)
                     else:
                         self.appUI.missionNameDisplay.configure(text = StringConstants.kappaUsableTileString, text_color = self.appUI.textColorGreen)

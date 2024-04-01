@@ -45,10 +45,11 @@ class FullParser:
         self.fileRollbackPosition = None
         self.fileRollbackPositionSmall = None
         self.restartReadingBool = False
+        self.playToxinSound = False
 
         # Time to sleep between each parsing progression, in millis
-        self.sleepBetweenCalls = 100
-        self.sleepBetweenCallsMultiplier = 1
+        self.sleepBetweenCalls = 1000
+        self.sleepBetweenCallsMultiplier = 10
 
         # System Settings
         customtkinter.set_appearance_mode("Dark")
@@ -580,8 +581,8 @@ class FullParser:
                 
                 # Check for toxin weapons, play sound of true
                 if StringConstants.disruptionToxinPylon in line:
-                    print("Toxin Weapons pylon")
-                    playsound(resource_pathAnnoying('soundToxin.mp3'))
+                    if(self.playToxinSound):
+                        playsound(resource_pathAnnoying('soundToxin.mp3'))
 
                 # Search for various milestones along each round
                 # Run time start

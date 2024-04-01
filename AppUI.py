@@ -97,6 +97,19 @@ class AppUI:
                                                    )
         self.alwaysOnTopCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[2], anchor = "w")
 
+        # Play sound for toxin
+        self.playToxinSoundCheckBoxValue = customtkinter.StringVar(value = "off")
+
+        self.playToxinSoundCheckBox = customtkinter.CTkCheckBox(self.settingsWindow, 
+                                                   text = "Play Toxin Weapon sound", 
+                                                   command = self.playToxinSoundCheckBox_event, 
+                                                   variable = self.playToxinSoundCheckBoxValue, 
+                                                   onvalue = "on", 
+                                                   offvalue = "off", 
+                                                   font = ("Arial", 14)
+                                                   )
+        self.playToxinSoundCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
+
         # Parse from file start checkbox
         self.parseFromStartCheckBoxValue = customtkinter.StringVar(value = "off")
 
@@ -108,7 +121,9 @@ class AppUI:
                                                    offvalue = "off", 
                                                    font = ("Arial", 14)
                                                    )
-        self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
+        self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[4], anchor = "w")
+
+
 
         self.restartReadingButton = customtkinter.CTkButton(
             self.settingsWindow,
@@ -349,6 +364,16 @@ class AppUI:
         else:
             self.app.attributes('-topmost', False)
 
+    # Function that manages the toxin playing sound checkbox value
+    def playToxinSoundCheckBox_event(self):
+        if self.fullParser.loggingState:
+            logging.info("Changed status of Toxin Sound " + self.playToxinSoundCheckBoxValue.get())
+
+        if self.playToxinSoundCheckBoxValue.get() == "on":
+            self.fullParser.playToxinSound = True
+        else:
+            self.fullParser.playToxinSound = False
+            
     # Function that manages Parse From Start value
     def parseFromStartCheckBox_event(self):
         if self.fullParser.loggingState:

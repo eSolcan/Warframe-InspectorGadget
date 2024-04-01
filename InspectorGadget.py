@@ -151,7 +151,7 @@ class FullParser:
                                     height = self.app._current_height - 80,
                                     axis_size = 2,
                                     x_axis_label_count = 6,
-                                    y_axis_max_value = 240,
+                                    y_axis_max_value = 150,
                                     y_axis_data = "Time",
                                     x_axis_data = "Round",
                                     x_axis_values = xAxisValues,

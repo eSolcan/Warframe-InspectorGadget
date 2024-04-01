@@ -23,6 +23,9 @@ class StringConstants:
     polyGoodTileString = "/Lotus/Levels/GrineerOcean/GrineerOceanIntermediateBotanyLab.level"
     tileMatchesList = [nanoGoodTileString, polyGoodTileString]
 
+    # Disruption toxin
+    disruptionToxinPylon = "SentientArtifactMission.lua: Disruption: Level aura 15"
+
     # Kappa strings
     kappaGrineerIntermediateString = "I: /Lotus/Levels/GrineerGalleon/GrnIntermediate"
     kappa1 = "One.level"

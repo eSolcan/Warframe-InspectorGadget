@@ -14,6 +14,7 @@ import numpy as np
 import tkchart
 from staticStrings import StringConstants
 from AppUI import AppUI
+from playsound import playsound
 
 class FullParser:
     def __init__(self) -> None:
@@ -566,6 +567,10 @@ class FullParser:
             self.file.seek(self.fileRollbackPositionSmall)
         else:
             while StringConstants.newLineString in line:
+                
+                # Check for toxin weapons, play sound of true
+                if StringConstants.disruptionToxinPylon in line:
+                    playsound('soundToxin.mp3')
 
                 # Search for various milestones along each round
                 # Run time start

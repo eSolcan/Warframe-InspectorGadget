@@ -357,7 +357,7 @@ class AppUI:
         if self.parseFromStartCheckBoxValue.get() == "on":
             self.fullParser.parseFromEnd = False
             self.fullParser.restartReadingBool = True
-            self.app.after(self.fullParser.sleepBetweenCalls, self.resetAnalyzerUI)
+            self.app.after(self.fullParser.sleepBetweenCalls + 100, self.resetAnalyzerUI)
         else:
             self.fullParser.parseFromEnd = True
 
@@ -462,7 +462,6 @@ class AppUI:
             logging.info("In resetAnalyzerUI()")
 
         # Update values
-        self.fullParser.restartReadingBool = False
         self.parseFromStartCheckBox.deselect()
 
         # Disable disruption related UI elements
@@ -489,7 +488,11 @@ class AppUI:
         self.restartReadingButton.place(relx = self.columnRelValues[5], rely = self.lineRelValues[9], anchor = "center")
         self.restartReadingText.place(relx = self.columnRelValues[5], rely = self.lineRelValues[10] - .02, anchor = "center")
 
-        self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.startParsing)
+        if self.fullParser.restartReadingBool:
+            self.fullParser.restartReadingBool = False
+            self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.startParsing)
+        else:
+            self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanMissionStart)
 
     # Update UI to be ready for disruption run logging. Removes most other elements, adds new elements back in
     def updateUIForDisruptionLogging(self):

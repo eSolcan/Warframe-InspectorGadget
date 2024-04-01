@@ -16,6 +16,15 @@ from staticStrings import StringConstants
 from AppUI import AppUI
 from playsound import playsound
 
+def resource_pathAnnoying(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 class FullParser:
     def __init__(self) -> None:
         self.currentMissionTileString = None
@@ -38,7 +47,8 @@ class FullParser:
         self.restartReadingBool = False
 
         # Time to sleep between each parsing progression, in millis
-        self.sleepBetweenCalls = 1000
+        self.sleepBetweenCalls = 100
+        self.sleepBetweenCallsMultiplier = 1
 
         # System Settings
         customtkinter.set_appearance_mode("Dark")
@@ -369,7 +379,7 @@ class FullParser:
         elif orbiterReset:
             self.app.after(self.sleepBetweenCalls, self.appUI.resetDisplay) 
         elif doneHere:
-            self.app.after(self.sleepBetweenCalls * 10, self.appUI.resetDisplay)
+            self.app.after(self.sleepBetweenCalls * self.sleepBetweenCallsMultiplier, self.appUI.resetDisplay)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanMissionLayout) 
 
@@ -460,7 +470,7 @@ class FullParser:
         elif orbiterReset:
             self.app.after(self.sleepBetweenCalls, self.appUI.resetDisplay) 
         elif doneHere:
-            self.app.after(self.sleepBetweenCalls * 10, self.appUI.resetDisplay)
+            self.app.after(self.sleepBetweenCalls * self.sleepBetweenCallsMultiplier, self.appUI.resetDisplay)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanCascadeLayout) 
 
@@ -549,7 +559,7 @@ class FullParser:
             self.app.after(self.sleepBetweenCalls, self.appUI.resetDisplay) 
         elif doneHere:
             # self.app.after(self.sleepBetweenCalls, self.updateUIForDisruptionLogging())
-            self.app.after(self.sleepBetweenCalls * 10, self.appUI.updateUIForDisruptionLogging)
+            self.app.after(self.sleepBetweenCalls * self.sleepBetweenCallsMultiplier, self.appUI.updateUIForDisruptionLogging)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanDisruptionLayout) 
 
@@ -570,7 +580,8 @@ class FullParser:
                 
                 # Check for toxin weapons, play sound of true
                 if StringConstants.disruptionToxinPylon in line:
-                    playsound('soundToxin.mp3')
+                    print("Toxin Weapons pylon")
+                    playsound(resource_pathAnnoying('soundToxin.mp3'))
 
                 # Search for various milestones along each round
                 # Run time start

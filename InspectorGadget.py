@@ -503,7 +503,7 @@ class FullParser:
                         logging.info("Found disruption tile in Line: " + line)
 
                 # End of mission load, display tiles
-                elif StringConstants.endOfMissionLoadString in line:
+                elif StringConstants.endOfMissionLoadStringKappa in line:
 
                     tile1 = self.disruptionTilesFoundList[0].split(StringConstants.dotLevelString, 1)[0]
                     tile2 = self.disruptionTilesFoundList[1].split(StringConstants.dotLevelString, 1)[0]
@@ -582,7 +582,13 @@ class FullParser:
                 # Check for toxin weapons, play sound of true
                 if StringConstants.disruptionToxinPylon in line:
                     if(self.playToxinSound):
-                        playsound(resource_pathAnnoying('soundToxin.mp3'))
+                        try:
+                            playsound(resource_pathAnnoying(r'soundtoxin.mp3'))
+                        except Exception as error:
+                            logging.error("Broke on trying to play toxin sound: \n")
+                            logging.error(error)
+                            print(error)
+                            
 
                 # Search for various milestones along each round
                 # Run time start

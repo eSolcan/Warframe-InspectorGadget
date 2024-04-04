@@ -580,14 +580,14 @@ class FullParser:
             while StringConstants.newLineString in line:
                 
                 # Check for toxin weapons, play sound of true
-                if StringConstants.disruptionToxinPylon in line:
-                    if(self.playToxinSound):
-                        try:
-                            playsound(resource_pathAnnoying(r'soundtoxin.mp3'))
-                        except Exception as error:
-                            logging.error("Broke on trying to play toxin sound: \n")
-                            logging.error(error)
-                            print(error)
+                # if StringConstants.disruptionToxinPylon in line:
+                #     if(self.playToxinSound):
+                #         try:
+                #             playsound(resource_pathAnnoying(r'soundtoxin.mp3'))
+                #         except Exception as error:
+                #             logging.error("Broke on trying to play toxin sound: \n")
+                #             logging.error(error)
+                #             print(error)
                             
 
                 # Search for various milestones along each round
@@ -716,10 +716,10 @@ class FullParser:
                     self.disruptionRun.keysCompleted = nrKeysCompleted
 
                 # Orbiter reset - extracts all round times and dumps to file. Also creates graph in new tab
-                elif StringConstants.orbiterResetString in line:
+                elif StringConstants.orbiterResetString in line or StringConstants.orbiterResetEarthString in line:
                     
                     if self.loggingState:
-                        logging.info("Orbiter reset -  Disruption. Line: " + line)
+                        logging.info("Orbiter reset - Disruption. Line: " + line)
 
                     if len(self.disruptionRun.rounds) < 5:
                         toTheStart = True

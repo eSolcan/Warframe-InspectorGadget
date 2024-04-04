@@ -98,17 +98,17 @@ class AppUI:
         self.alwaysOnTopCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[2], anchor = "w")
 
         # Play sound for toxin
-        self.playToxinSoundCheckBoxValue = customtkinter.StringVar(value = "off")
+        # self.playToxinSoundCheckBoxValue = customtkinter.StringVar(value = "off")
 
-        self.playToxinSoundCheckBox = customtkinter.CTkCheckBox(self.settingsWindow, 
-                                                   text = "Play Toxin Weapon sound", 
-                                                   command = self.playToxinSoundCheckBox_event, 
-                                                   variable = self.playToxinSoundCheckBoxValue, 
-                                                   onvalue = "on", 
-                                                   offvalue = "off", 
-                                                   font = ("Arial", 14)
-                                                   )
-        self.playToxinSoundCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
+        # self.playToxinSoundCheckBox = customtkinter.CTkCheckBox(self.settingsWindow, 
+        #                                            text = "Play Toxin Weapon sound", 
+        #                                            command = self.playToxinSoundCheckBox_event, 
+        #                                            variable = self.playToxinSoundCheckBoxValue, 
+        #                                            onvalue = "on", 
+        #                                            offvalue = "off", 
+        #                                            font = ("Arial", 14)
+        #                                            )
+        # self.playToxinSoundCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
 
         # Parse from file start checkbox
         self.parseFromStartCheckBoxValue = customtkinter.StringVar(value = "off")
@@ -121,7 +121,7 @@ class AppUI:
                                                    offvalue = "off", 
                                                    font = ("Arial", 14)
                                                    )
-        self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[4], anchor = "w")
+        self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
 
 
 

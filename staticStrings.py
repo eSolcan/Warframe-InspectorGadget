@@ -4,6 +4,7 @@ class StringConstants:
 
     # Orbiter reset string
     orbiterResetString = "/Lotus/Levels/Proc/PlayerShip generating layout with segments"
+    orbiterResetEarthString = "/Lotus/Levels/Proc/TheNewWar/PartTwo/TNWDrifterCampMain generating layout with segments"
 
     # Various mission names
     missionNameString = "ThemedSquadOverlay.lua: Mission name:"

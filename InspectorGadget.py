@@ -352,7 +352,7 @@ class FullParser:
                     self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextNotFoundString, text_color = self.appUI.textColorRed)
 
                 # Orbiter reset
-                elif StringConstants.orbiterResetString in line:
+                elif StringConstants.orbiterResetString in line or StringConstants.orbiterResetEarthString in line:
                     # Save rollback point in case of required restart
                     self.fileRollbackPosition = self.file.tell()
 
@@ -441,7 +441,7 @@ class FullParser:
                     break 
 
                 # Orbiter reset
-                elif StringConstants.orbiterResetString in line:
+                elif StringConstants.orbiterResetString in line or StringConstants.orbiterResetEarthString in line:
                     orbiterReset = True
 
                     self.cascadeTilesFound.clear()
@@ -531,7 +531,7 @@ class FullParser:
                         break
 
                 # Orbiter reset
-                elif StringConstants.orbiterResetString in line:
+                elif StringConstants.orbiterResetString in line or StringConstants.orbiterResetEarthString in line:
                     orbiterReset = True
 
                     # Save rollback point in case of required restart

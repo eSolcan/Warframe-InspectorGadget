@@ -108,7 +108,7 @@ class AppUI:
         #                                            offvalue = "off", 
         #                                            font = ("Arial", 14)
         #                                            )
-        # self.playToxinSoundCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
+        # self.playToxinSoundCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[4], anchor = "w")
 
         # Parse from file start checkbox
         self.parseFromStartCheckBoxValue = customtkinter.StringVar(value = "off")
@@ -124,20 +124,8 @@ class AppUI:
         self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
 
 
-
-        self.restartReadingButton = customtkinter.CTkButton(
-            self.settingsWindow,
-            text="Restart",
-            font=("Arial", 18),
-            width = 84,
-            height = 32,
-            command = self.restartReading
-        )
-
-        self.restartReadingButton.place(relx = self.columnRelValues[5], rely = self.lineRelValues[9], anchor = "center")
-
-        self.restartReadingText = customtkinter.CTkLabel(self.settingsWindow, text = StringConstants.restartReadingTextString, text_color = self.textColor, font = ("Arial", 14))
-        self.restartReadingText.place(relx = self.columnRelValues[5], rely = self.lineRelValues[10] - .02, anchor = "center")
+        # self.restartReadingText = customtkinter.CTkLabel(self.settingsWindow, text = StringConstants.restartReadingTextString, text_color = self.textColor, font = ("Arial", 14))
+        # self.restartReadingText.place(relx = self.columnRelValues[5], rely = self.lineRelValues[10] - .02, anchor = "center")
 
         # Analyzer Tab
         self.missionNameDisplay = customtkinter.CTkLabel(self.analyzerWindow, text = StringConstants.replacedByMissionNameString, text_color = self.textColor, font = ("Arial", 28))

@@ -531,11 +531,7 @@ class FullParser:
 
                         # Create disruption run that will store all round information
                         self.disruptionRun = DisruptionRun()
-
-                        # Stop logging, unlikely that anything breaks from here on out
-                        self.appUI.restartReadingText.place_forget()
-                        self.appUI.restartReadingButton.place_forget()
-
+                        
                         break
 
                 # Orbiter reset

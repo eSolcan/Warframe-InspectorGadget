@@ -509,9 +509,6 @@ class AppUI:
         self.foundTileDisplay.configure(text = StringConstants.waitingForMissionStart, text_color = self.textColor)
         self.missionNameDisplay.configure(text = StringConstants.replacedByMissionNameString, text_color = self.textColor)
 
-        self.restartReadingButton.place(relx = self.columnRelValues[5], rely = self.lineRelValues[9], anchor = "center")
-        self.restartReadingText.place(relx = self.columnRelValues[5], rely = self.lineRelValues[10] - .02, anchor = "center")
-
         if self.fullParser.restartReadingBool:
             self.fullParser.restartReadingBool = False
             self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.startParsing)

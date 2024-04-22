@@ -299,7 +299,7 @@ class AppUI:
             self.analyzerWindow,
             text="<",
             font=("Arial", 14),
-            width = 20,
+            width = 28,
             height = 20,
             command = self.previousRound
         )
@@ -308,7 +308,7 @@ class AppUI:
             self.analyzerWindow,
             text=">",
             font=("Arial", 14),
-            width = 20,
+            width = 28,
             height = 20,
             command = self.nextRound
         )
@@ -326,14 +326,25 @@ class AppUI:
         self.inputBoxValue = tkinter.StringVar()
 
         # Input box for going to specific round number in disruption run 
-        self.disruptionRoundInputBox = customtkinter.CTkTextbox(self.analyzerWindow, 
-                                                           width = 44, 
-                                                           height = 20, 
-                                                           corner_radius = 4,
-                                                           border_width = 1,
-                                                           activate_scrollbars = False,
-                                                           wrap = "none"
-                                                           )
+        self.disruptionRoundInputBox = customtkinter.CTkTextbox(
+            self.analyzerWindow, 
+            width = 44, 
+            height = 20, 
+            corner_radius = 4,
+            border_width = 1,
+            activate_scrollbars = False,
+            wrap = "none"
+        )
+        
+        # Button for parsing of a new run after one has been finished
+        self.continueParsingButton = customtkinter.CTkButton(
+            self.analyzerWindow,
+            text="New Run",
+            font=("Arial", 24, "bold"),
+            width = 140,
+            height = 40,
+            command = self.startNewRunAfterAnotherFinished
+        )
 
         self.disrutpionUIElements = [self.keyInsertsStringDisplay, self.demoKillsStringDisplay, self.previousRoundTimeStringDisplay, self.currentAverageStringDisplay, self.expectedEndTimeStringDisplay,
                                 self.bestRoundTimeStringDisplay, self.key1Display, self.key2Display, self.key3Display, self.key4Display, self.demo1Display, self.demo2Display, self.demo3Display, self.demo4Display,
@@ -509,6 +520,21 @@ class AppUI:
         self.foundTileDisplay.configure(text = StringConstants.waitingForMissionStart, text_color = self.textColor)
         self.missionNameDisplay.configure(text = StringConstants.replacedByMissionNameString, text_color = self.textColor)
 
+        self.key1Display.configure(text = "")
+        self.key2Display.configure(text = "")
+        self.key3Display.configure(text = "")
+        self.key4Display.configure(text = "")
+
+        self.demo1Display.configure(text = "")
+        self.demo2Display.configure(text = "")
+        self.demo3Display.configure(text = "")
+        self.demo4Display.configure(text = "")
+        
+        self.previousRoundTimeDisplay.configure(text = "")
+        self.currentAverageDisplay.configure(text = "")
+        self.expectedEndTimeDisplay.configure(text = "")
+        self.bestRoundTimeDisplay.configure(text = "")
+
         if self.fullParser.restartReadingBool:
             self.fullParser.restartReadingBool = False
             self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.startParsing)
@@ -547,11 +573,11 @@ class AppUI:
         self.expectedEndTimeDisplay.place(relx = self.columnRelValuesDisruption[4], rely = self.lineRelValuesDisruption[3], anchor = "center")
         self.bestRoundTimeDisplay.place(relx = self.columnRelValuesDisruption[4], rely = self.lineRelValuesDisruption[2], anchor = "center")
 
-        self.previousRoundButton.place(relx = .43, rely = self.columnRelValuesDisruption[5], anchor = "c")
-        self.nextRoundButton.place(relx = .46, rely = self.columnRelValuesDisruption[5], anchor = "c")
+        self.previousRoundButton.place(relx = .42, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
+        self.nextRoundButton.place(relx = .455, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
 
-        self.disruptionRoundInputBox.place(relx = .5, rely = self.columnRelValuesDisruption[5], anchor = "c")
-        self.updateFromInputButton.place(relx = .56, rely = self.columnRelValuesDisruption[5], anchor = "c")
+        self.disruptionRoundInputBox.place(relx = .5, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
+        self.updateFromInputButton.place(relx = .56, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
 
         if self.fullParser.loggingState:
             logging.info("updateUIForDisruptionLogging() finished, moving to scanDisruptionProgress()")
@@ -606,3 +632,16 @@ class AppUI:
         self.missionNameDisplay.configure(text = StringConstants.replacedByMissionNameString, text_color = self.textColor)
 
         self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanMissionStart) 
+        
+    # Used to toggle the button that allows for the parsing of new run after one has been finished
+    def toggleNewRunButton(self, newState):
+        if newState:
+            self.continueParsingButton.place(relx = .5, rely = self.columnRelValuesDisruption[5] + .05, anchor = "c")
+        else:
+            self.continueParsingButton.place_forget()
+    
+    # Used to start new run after one has been finished
+    def startNewRunAfterAnotherFinished(self):
+        self.toggleNewRunButton(False)
+        self.resetAnalyzerUI()
+    

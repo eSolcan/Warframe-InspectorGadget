@@ -122,7 +122,7 @@ class StringConstants:
     selectBadTilesApolloString = "Bad tiles (Apollo):"
     selectBadTilesOlympusString = "Bad tiles (Olympus):"
 
-    whatIsBeingParsedText = "Parsing:\nKappa & Apollo\nCascade\nZabala - Nano\nOphelia - Poly"
+    whatIsBeingParsedText = "Parsing:\nDisruption\nCascade\nZabala - Nano\nOphelia - Poly"
 
     discordTagString = "@wtb_username"
 
@@ -146,7 +146,7 @@ class StringConstants:
     bestRoundTimeString = "Best round:"
     levelCapTimeString = "LvlCap time:"
 
-    disruptionDataDumpedString = "Run written to file disruptionFullRunData.json and chart created in new tab"
+    disruptionDataDumpedString = "Run written to disk and Chart created in new tab"
 
     # Misc strings
     scriptString = "Script"

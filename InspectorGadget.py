@@ -53,7 +53,7 @@ class FullParser:
 
         # Time to sleep between each parsing progression, in millis
         self.sleepBetweenCalls = 1000
-        self.sleepBetweenCallsMultiplier = 10
+        self.sleepBetweenCallsMultiplier = 1
 
         # System Settings
         customtkinter.set_appearance_mode("Dark")
@@ -112,6 +112,8 @@ class FullParser:
         if self.loggingState:
             logging.info("In saveTimesAndDumpJson()")
 
+        self.currentRoundShown -= 1
+
         jsonClass = DisruptionRunTimesJson()
 
         # Add all round times to the list
@@ -127,7 +129,7 @@ class FullParser:
             f.write(JSONData)
             f.close()
 
-        self.appUI.disruptionDataDumpedDisplay.place(relx = .5, rely = self.appUI.lineRelValues[8], anchor = "center")
+        self.appUI.disruptionDataDumpedDisplay.place(relx = .5, rely = self.appUI.lineRelValues[8] - 0.05, anchor = "center")
 
         # Create new tab for chart, and add chart with times per round
         self.appUI.chartWindow = self.appUI.innerWindowBox.add("Chart")  
@@ -210,6 +212,9 @@ class FullParser:
         except:
             logging.error("Attempted to draw chart with no finished rounds")
             
+        # Enable new run button 
+        self.appUI.toggleNewRunButton(True)
+            
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     #                               Parsing Funcs                                   #
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -257,8 +262,10 @@ class FullParser:
 
         self.fileRollbackPositionSmall = self.file.tell()
         line = self.file.readline()  
+        
         if self.loggingState:
             logging.info(line)
+            
         # If read line is faulty, rollback. Othewise, proceed with normal parsing
         if StringConstants.newLineString not in line or line == "":
             self.file.seek(self.fileRollbackPositionSmall)
@@ -530,8 +537,7 @@ class FullParser:
                         doneHere = True
 
                         # Create disruption run that will store all round information
-                        self.disruptionRun = DisruptionRun()
-                        
+                        self.disruptionRun = DisruptionRun()                        
                         break
 
                 # Orbiter reset

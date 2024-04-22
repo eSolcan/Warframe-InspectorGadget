@@ -18,7 +18,7 @@ from playsound import playsound
 import requests
 
 requestVersionContent = requests.get("https://raw.githubusercontent.com/eSolcan/Warframe_InspectorGadget/main/version.txt")
-currentVersion = "1.3.2"
+currentVersion = "1.3.3"
 
 def resource_pathAnnoying(relative_path):
     try:
@@ -53,7 +53,7 @@ class FullParser:
 
         # Time to sleep between each parsing progression, in millis
         self.sleepBetweenCalls = 1000
-        self.sleepBetweenCallsMultiplier = 1
+        self.sleepBetweenCallsMultiplier = 10
 
         # System Settings
         customtkinter.set_appearance_mode("Dark")

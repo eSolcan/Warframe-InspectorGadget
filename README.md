@@ -6,7 +6,7 @@ Simple EE.log parser used to search for various mission tilesets, as well as ana
 
 InspectorGadget can be used to simply look for the correct tiles in various missions for farming Nanospores and Polymer.
 
-It can also be used to look for specific layouts in disruption missions (currently supported - Kappa and Apollo), and subsequently analyze a full run, displaying times of key inserts, demolyst kills, expected 46 round time, amongst other stats. A chart containing time/round is created at the end of the run and all raw data collected is dumped to a file, allowing users to analyze all the data in minute detail.
+It can also be used to look for specific layouts in some disruption missions, and subsequently analyze a full run, displaying times of key inserts, demolyst kills, expected 45 round time (level cap), amongst other stats. A chart containing time/round is created at the end of the run and all raw data collected is dumped to a file, allowing users to analyze all the data in minute detail.
 
 Lastly, InspectorGadget can also parse through Cascade map layout, showing a sequence of numbers which indicate the number of exolizers in each room.
 

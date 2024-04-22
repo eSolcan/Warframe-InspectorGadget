@@ -124,7 +124,7 @@ class AppUI:
         self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
 
         # Update available window bottom left
-        self.updateAvailableWindow = customtkinter.CTkFrame(self.innerWindowBox, width = 260, height = 140, fg_color="#404040")
+        self.updateAvailableWindow = customtkinter.CTkFrame(self.settingsWindow, width = 260, height = 140, fg_color="#404040")
         self.updateAvailableWindow.pack_propagate(0)
         
         self.updatedVersionAvailableText = customtkinter.CTkLabel(self.updateAvailableWindow, text = StringConstants.updateAvailableString, text_color = self.textColorRed, font = ("Arial", 28, "bold"))
@@ -349,7 +349,7 @@ class AppUI:
     # Function to enable or disable update available msg
     def toggleUpdateAvailableMsg(self, newState):
         if newState:
-            self.updateAvailableWindow.place(relx = self.columnRelValues[0] + .01, rely = .98, anchor = "sw")
+            self.updateAvailableWindow.place(relx = self.columnRelValues[0], rely = .99, anchor = "sw")
         else:
             self.updateAvailableWindow.place_forget()
             

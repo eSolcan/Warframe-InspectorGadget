@@ -18,7 +18,7 @@ from playsound import playsound
 import requests
 
 requestVersionContent = requests.get("https://raw.githubusercontent.com/eSolcan/Warframe_InspectorGadget/main/version.txt")
-currentVersion = "1.3"
+currentVersion = "1.3.1"
 
 def resource_pathAnnoying(relative_path):
     try:

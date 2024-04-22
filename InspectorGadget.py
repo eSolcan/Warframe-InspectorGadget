@@ -15,6 +15,10 @@ import tkchart
 from staticStrings import StringConstants
 from AppUI import AppUI
 from playsound import playsound
+import requests
+
+requestVersionContent = requests.get("https://raw.githubusercontent.com/eSolcan/Warframe_InspectorGadget/main/version.txt")
+currentVersion = "1.3"
 
 def resource_pathAnnoying(relative_path):
     try:
@@ -212,6 +216,10 @@ class FullParser:
 
     # Start parsing a file from end of file
     def startParsing(self):
+        # Check available version update
+        if(requestVersionContent.text != currentVersion):
+            self.appUI.toggleUpdateAvailableMsg(True)
+            
         # Logging
         if self.loggingState:
             logging.info("In startParsing()")

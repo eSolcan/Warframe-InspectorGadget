@@ -2,6 +2,8 @@
 class StringConstants:
     newLineString = "\n"
 
+    updateAvailableString = "Update available\n Message seal"
+
     # Orbiter reset string
     orbiterResetString = "/Lotus/Levels/Proc/PlayerShip generating layout with segments"
     orbiterResetEarthString = "/Lotus/Levels/Proc/TheNewWar/PartTwo/TNWDrifterCampMain generating layout with segments"

@@ -123,9 +123,12 @@ class AppUI:
                                                    )
         self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
 
-
-        # self.restartReadingText = customtkinter.CTkLabel(self.settingsWindow, text = StringConstants.restartReadingTextString, text_color = self.textColor, font = ("Arial", 14))
-        # self.restartReadingText.place(relx = self.columnRelValues[5], rely = self.lineRelValues[10] - .02, anchor = "center")
+        # Update available window bottom left
+        self.updateAvailableWindow = customtkinter.CTkFrame(self.innerWindowBox, width = 260, height = 140, fg_color="#404040")
+        self.updateAvailableWindow.pack_propagate(0)
+        
+        self.updatedVersionAvailableText = customtkinter.CTkLabel(self.updateAvailableWindow, text = StringConstants.updateAvailableString, text_color = self.textColorRed, font = ("Arial", 28, "bold"))
+        self.updatedVersionAvailableText.place(relx = .5, rely = .5, anchor = "center")
 
         # Analyzer Tab
         self.missionNameDisplay = customtkinter.CTkLabel(self.analyzerWindow, text = StringConstants.replacedByMissionNameString, text_color = self.textColor, font = ("Arial", 28))
@@ -342,6 +345,14 @@ class AppUI:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
     #                                   Class Funcs                                 #
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+    # Function to enable or disable update available msg
+    def toggleUpdateAvailableMsg(self, newState):
+        if newState:
+            self.updateAvailableWindow.place(relx = self.columnRelValues[0] + .01, rely = .98, anchor = "sw")
+        else:
+            self.updateAvailableWindow.place_forget()
+            
 
     # Function that manages Always on Top Checkbox value
     def alwaysOnTopCheckBox_event(self):

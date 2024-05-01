@@ -64,20 +64,32 @@ class AppUI:
         self.analyzerWindow = self.innerWindowBox.add("Analyzer")  
         self.chartWindow = None
 
-        # Smaller inner window that contains discord tag
-        self.smallerInnerWindowDiscordBox = customtkinter.CTkFrame(self.innerWindowBox, width = 130, height = 22, fg_color="#404040")
+        # Smaller inner window that contains discord tag and version number
+        self.smallerInnerWindowDiscordBox = customtkinter.CTkFrame(self.innerWindowBox, width = 130, height = 34, fg_color = "#404040")
         self.smallerInnerWindowDiscordBox.pack_propagate(0)
-        self.smallerInnerWindowDiscordBox.place(relx = self.columnRelValues[9] + .015, rely = .96, anchor = "center")
+        self.smallerInnerWindowDiscordBox.place(relx = self.columnRelValues[9] + .015, rely = .95, anchor = "center")
+        # self.smallerInnerWindowDiscordBox.place(relx = self.columnRelValues[9] + .015, rely = .96, anchor = "center")
 
         # Discord tag and image
         self.discordTagLabel = customtkinter.CTkLabel(self.smallerInnerWindowDiscordBox, text = StringConstants.discordTagString, text_color = self.textColor, font = ("Arial", 11))
-        self.discordTagLabel.place(relx = .43, rely = .5, anchor = "center")
+        self.discordTagLabel.place(relx = .43, rely = .3, anchor = "center")
 
         imageDiscordRaw = Image.open(resource_path("discordLogo.png"))
 
         imageDiscordLogo = customtkinter.CTkImage(light_image = imageDiscordRaw, dark_image = imageDiscordRaw, size=(16, 16))
         self.imageLabel = customtkinter.CTkLabel(self.smallerInnerWindowDiscordBox, text="", image = imageDiscordLogo)
         self.imageLabel.place(relx = 0.85, rely = 0.5, anchor = "center")
+
+        # Version text
+        self.versionNumberLabel = customtkinter.CTkLabel(
+                                                self.smallerInnerWindowDiscordBox, 
+                                                text = "v" + self.fullParser.currentVersion, 
+                                                text_color = self.textColor, 
+                                                fg_color = "transparent",
+                                                font = ("Arial", 11),
+                                                anchor = "n"
+                                                )
+        self.versionNumberLabel.place(relx = .43, rely = .9, anchor = "center")
 
         # UI elements
         # Settings tab
@@ -220,6 +232,8 @@ class AppUI:
         # Checkboxes for each of the possible main tiles - Olympus
         self.olympus1CheckBoxValue = customtkinter.StringVar(value = "off")
         self.olympus2CheckBoxValue = customtkinter.StringVar(value = "off")
+        self.olympus3CheckBoxValue = customtkinter.StringVar(value = "on")
+        self.olympus4CheckBoxValue = customtkinter.StringVar(value = "on")
         self.olympus5CheckBoxValue = customtkinter.StringVar(value = "off")
         self.olympus6CheckBoxValue = customtkinter.StringVar(value = "off")
         self.olympus10CheckBoxValue = customtkinter.StringVar(value = "off")
@@ -228,6 +242,8 @@ class AppUI:
         self.olympusConnCheckBoxValue = customtkinter.StringVar(value = "off")
         self.olympusCheckValuesList = [self.olympus1CheckBoxValue, 
                                        self.olympus2CheckBoxValue, 
+                                       self.olympus3CheckBoxValue, 
+                                       self.olympus4CheckBoxValue, 
                                        self.olympus5CheckBoxValue, 
                                        self.olympus6CheckBoxValue, 
                                        self.olympus10CheckBoxValue, 
@@ -247,12 +263,14 @@ class AppUI:
         self.selectBadTilesOlympusDisplay.bind("<Button-1>", lambda e:openInBrowser("https://imgur.com/a/cKyEWnp"))
 
         # Create checkboxes for all olympus tiles
-        i = 0
+        index = 0
+        counterSpecial = 0
+        midIndexOlympusList = len(self.olympusCheckValuesList)/2
         for x in self.olympusCheckValuesList:
             newCheckbox = customtkinter.CTkCheckBox(self.settingsWindow, 
-                                                text = StringConstants.olympusListForCheckbox[i], 
-                                                command = lambda i = i: self.updateCheckboxValueOlympus(i), 
-                                                variable = self.olympusCheckValuesList[i], 
+                                                text = StringConstants.olympusListForCheckbox[index], 
+                                                command = lambda index = index: self.updateCheckboxValueOlympus(index), 
+                                                variable = self.olympusCheckValuesList[index], 
                                                 onvalue = "on", 
                                                 offvalue = "off", 
                                                 font = ("Arial", 14),
@@ -260,9 +278,18 @@ class AppUI:
                                                 )
             
             self.olympusCheckboxes.append(newCheckbox)
-            newCheckbox.place(relx = self.columnRelValues[8] - .025, rely = self.lineRelValues[i + 2], anchor = "w")
+            
+            # Reset line placement counter after mid point has been reached
+            if (index == midIndexOlympusList):
+                counterSpecial = 0
+            
+            if(index < midIndexOlympusList):
+                newCheckbox.place(relx = self.columnRelValues[8] - .065, rely = self.lineRelValues[counterSpecial + 2], anchor = "w")
+            else:
+                newCheckbox.place(relx = self.columnRelValues[8] + .020, rely = self.lineRelValues[counterSpecial + 2], anchor = "w")
 
-            i += 1
+            index += 1
+            counterSpecial += 1
 
         # UI elements for disruption
         self.keyInsertsStringDisplay = customtkinter.CTkLabel(self.analyzerWindow, text = StringConstants.disruptionKeyInsertsStaticString, text_color = self.textColor, font = ("Arial", 24))
@@ -534,6 +561,8 @@ class AppUI:
         self.currentAverageDisplay.configure(text = "")
         self.expectedEndTimeDisplay.configure(text = "")
         self.bestRoundTimeDisplay.configure(text = "")
+        
+        self.expectedEndTimeStringDisplay.configure(text = StringConstants.disruptionExpectedEndString)
 
         if self.fullParser.restartReadingBool:
             self.fullParser.restartReadingBool = False

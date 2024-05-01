@@ -50,7 +50,7 @@ class StringConstants:
     apollo6 = "RuinedPiaza.level"
     apollo7 = "Stealth.level"
     apolloList = [apollo1, apollo2, apollo3, apollo4, apollo5, apollo6, apollo7]
-    apolloListForCheckbox = ["BotGarden", "Cloister", "Endurance", "HallsOfJudgement", "Power", "RuinedPiaza", "Stealth"]
+    apolloListForCheckbox = ["BotGarden", "Cloister", "Endurance", "HallsOfJ", "Power", "RuinedPiaza", "Stealth"]
 
     # Olympus strings
     olympusCmpString = "I: /Lotus/Levels/GrineerSettlement/Cmp"
@@ -64,8 +64,8 @@ class StringConstants:
     olympus11 = "Intermediate11.level"
     olympusAss = "Assassinate.level"
     olympusConn3 = "Connector03.level"
-    olympusList = [olympus1, olympus2, olympus5, olympus6, olympus10, olympus11, olympusAss, olympusConn3]
-    olympusListForCheckbox = ["01", "02", "05", "06", "10", "11", "Ass", "Conn"]
+    olympusList = [olympus1, olympus2, olympus3, olympus4, olympus5, olympus6, olympus10, olympus11, olympusAss, olympusConn3]
+    olympusListForCheckbox = ["01", "02", "03", "04", "05", "06", "10", "11", "Ass", "Conn"]
 
     # Cascade strings
     tuvulCommonsIntString = "I: /Lotus/Levels/Zariman/Int"

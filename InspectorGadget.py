@@ -18,7 +18,6 @@ from playsound import playsound
 import requests
 
 requestVersionContent = requests.get("https://raw.githubusercontent.com/eSolcan/Warframe_InspectorGadget/main/version.txt")
-currentVersion = "1.3.3"
 
 def resource_pathAnnoying(relative_path):
     try:
@@ -31,6 +30,8 @@ def resource_pathAnnoying(relative_path):
 
 class FullParser:
     def __init__(self) -> None:
+        self.currentVersion = "1.3.4"
+
         self.currentMissionTileString = None
         self.badTileList = None
 
@@ -222,7 +223,7 @@ class FullParser:
     # Start parsing a file from end of file
     def startParsing(self):
         # Check available version update
-        if(requestVersionContent.text != currentVersion):
+        if(requestVersionContent.text != self.currentVersion):
             self.appUI.toggleUpdateAvailableMsg(True)
             
         # Logging

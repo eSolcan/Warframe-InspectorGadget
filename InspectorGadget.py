@@ -285,7 +285,7 @@ class FullParser:
 
                     # If doing disruption, will go to a different parser function
                     if any(x in line for x in StringConstants.disruptionMissionNames):
-                        if StringConstants.kappaSedna in self.currentMission:
+                        if StringConstants.kappaSedna in self.currentMission or StringConstants.urUranus in self.currentMission:
                             self.currentMissionTileString = StringConstants.kappaGrineerIntermediateString
                             self.badTileList = self.appUI.kappaRegBadList
                         elif StringConstants.apolloLua in self.currentMission:

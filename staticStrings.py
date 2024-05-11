@@ -15,11 +15,12 @@ class StringConstants:
     opheliaUranus = "Ophelia (Uranus)"
     kappaSedna = "Kappa (Sedna)"
     apolloLua = "Apollo (Lua)"
+    urUranus = "Ur (Uranus)"
     copernicusLua = "Copernicus (Lua)"
     tuvulCommonsZariman = "Tuvul Commons (Zariman)"
     olympusMars = "Olympus (Mars)"
 
-    disruptionMissionNames = [kappaSedna, apolloLua, olympusMars]
+    disruptionMissionNames = [kappaSedna, apolloLua, olympusMars, urUranus]
 
     # Tile names for nano and poly farming
     nanoGoodTileString = "/Lotus/Levels/InfestedCorpus/InfestedReactor.level"

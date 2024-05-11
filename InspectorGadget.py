@@ -332,7 +332,7 @@ class FullParser:
         else:
             self.app.after(self.sleepBetweenCalls, self.scanMissionStart) 
 
-    # Start scanning for mission layout. Currently supports Zabala (nano) and Ophelia (poly)
+    # Start scanning for mission layout
     def scanMissionLayout(self):
         # Logging
         if self.loggingState:
@@ -351,6 +351,17 @@ class FullParser:
             while StringConstants.newLineString in line:
                 # Search for specific tiles
                 if any(x in line for x in StringConstants.tileMatchesList):
+                    self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextFoundString, text_color = self.appUI.textColorGreen)
+                    self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
+
+                    if self.loggingState:
+                        logging.info("Found specific tile in line for mission " + self.currentMission + ". Line: " + line)
+
+                    doneHere = True
+                    break
+                
+                elif StringConstants.assurUranus in self.currentMission and StringConstants.assurGoodTileString in line:
+                    doneHere = True
                     self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextFoundString, text_color = self.appUI.textColorGreen)
                     self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
 

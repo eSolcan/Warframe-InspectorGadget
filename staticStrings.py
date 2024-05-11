@@ -12,6 +12,7 @@ class StringConstants:
     missionNameString = "ThemedSquadOverlay.lua: Mission name:"
     zabalaEris = "Zabala (Eris)"
     nimusEris = "Nimus (Eris)"
+    assurUranus = "Assur (Uranus)"
     opheliaUranus = "Ophelia (Uranus)"
     kappaSedna = "Kappa (Sedna)"
     apolloLua = "Apollo (Lua)"
@@ -25,6 +26,7 @@ class StringConstants:
     # Tile names for nano and poly farming
     nanoGoodTileString = "/Lotus/Levels/InfestedCorpus/InfestedReactor.level"
     polyGoodTileString = "/Lotus/Levels/GrineerOcean/GrineerOceanIntermediateBotanyLab.level"
+    assurGoodTileString = "/Lotus/Levels/GrineerGalleon/GrnConnectorFour.level"
     tileMatchesList = [nanoGoodTileString, polyGoodTileString]
 
     # Disruption toxin

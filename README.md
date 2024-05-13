@@ -11,14 +11,14 @@ It can also be used to look for specific layouts in some disruption missions, an
 Lastly, InspectorGadget can also parse through Cascade map layout, showing a sequence of numbers which indicate the number of exolizers in each room.
 
 ## Using the app
-Simply run the InspectorGadget file, or the built .exe file. This will start parsing EE.log from the end of file, and will display relevant information in the Analyzer tab. 
+Simply run the built .exe file, or directly the InspectorGadget.py file. This will start parsing EE.log from the end of file, and will display relevant information in the Analyzer tab. Make sure to open Warframe before, as it only "opens" ee.log once, and doesn't detect game restarts.
 
 If you desire to search for a specific disruption layout combination, select the tiles which you consider bad, and those will be discarded by the app. Once a good layout is found, the analyzer window will automatically switch to disruption analysis mode. As mentioned in the description portion before, after extracting from the disruption run, a graph is created in a new tab, and all collected data is written to disk.
 
 In the **Settings** tab, the general settings allow for the window to be always on top, as well as an option do log events to a log file. Furthermore, a "Read from Start" option exists, which allows a fully completed disruption run to be analyzed.
 
 ## Questions about the app
-Message *@wtb_username* on Discord for any questions or suggestions regarding the app and its functionalities. A working .exe version is available in the releases tab. Due to being built using pyinstaller and making use of the requests module to check app version, Windows defender usually considers it malicious, so apologies for that.
+Message *@wtb_username* on Discord for any questions or suggestions regarding the app and its functionalities. A working .exe version is available in the [Releases](https://github.com/eSolcan/Warframe-InspectorGadget/releases/tag/v1.3.4) tab in InspectorGadget.zip. Due to being built using pyinstaller and making use of the requests module to check app version, Windows defender usually considers it malicious, so apologies for that.
 
 Alternatively, you can run the python file directly, requiring manual installation of missing modules.
 

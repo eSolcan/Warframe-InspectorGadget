@@ -140,7 +140,16 @@ class AppUI:
         self.updateAvailableWindow.pack_propagate(0)
         
         self.updatedVersionAvailableText = customtkinter.CTkLabel(self.updateAvailableWindow, text = StringConstants.updateAvailableString, text_color = self.textColorRed, font = ("Arial", 28, "bold"))
-        self.updatedVersionAvailableText.place(relx = .5, rely = .5, anchor = "center")
+        self.updatedVersionAvailableText.place(relx = .5, rely = .35, anchor = "center")
+        
+        self.updatedVersionAvailableHyperlink = customtkinter.CTkLabel(self.updateAvailableWindow, 
+                                                                       text = StringConstants.updateAvailableHyperlinkString, 
+                                                                       text_color = self.textColorHyperlink, 
+                                                                       font = ("Arial", 32, "bold"),
+                                                                       cursor = "hand2")
+        self.updatedVersionAvailableHyperlink.place(relx = .5, rely = .63, anchor = "center") 
+        self.updatedVersionAvailableHyperlink.bind("<Button-1>", lambda e:openInBrowser(StringConstants.updateUrl))
+        
 
         # Analyzer Tab
         self.missionNameDisplay = customtkinter.CTkLabel(self.analyzerWindow, text = StringConstants.replacedByMissionNameString, text_color = self.textColor, font = ("Arial", 28))
@@ -525,6 +534,10 @@ class AppUI:
 
         # Update values
         self.parseFromStartCheckBox.deselect()
+
+        # Reset current round indicator to 1
+        self.disruptionRoundInputBox.delete('0.0', 'end')
+        self.disruptionRoundInputBox.insert('end', 1)
 
         # Disable disruption related UI elements
         for x in self.disrutpionUIElements:

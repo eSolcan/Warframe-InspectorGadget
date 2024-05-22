@@ -17,7 +17,7 @@ from AppUI import AppUI
 from playsound import playsound
 import requests
 
-requestVersionContent = requests.get("https://raw.githubusercontent.com/eSolcan/Warframe_InspectorGadget/main/version.txt")
+requestVersionContent = requests.get(StringConstants.versionUrl)
 
 def resource_pathAnnoying(relative_path):
     try:
@@ -30,7 +30,7 @@ def resource_pathAnnoying(relative_path):
 
 class FullParser:
     def __init__(self) -> None:
-        self.currentVersion = "1.3.4"
+        self.currentVersion = "1.3.5"
 
         self.currentMissionTileString = None
         self.badTileList = None
@@ -231,8 +231,13 @@ class FullParser:
             logging.info("In startParsing()")
 
         # Open file if first time going through
-        if self.file == None:
-            self.file = open(self.filename, 'r', encoding='latin-1')
+        try:
+            if self.file == None:
+                self.file = open(self.filename, 'r', encoding='latin-1')
+        except:
+            # If no file, keep trying
+            self.app.after(self.sleepBetweenCalls, self.startParsing)
+            return
             
         # Start from end/beginning of file
         if self.parseFromEnd:

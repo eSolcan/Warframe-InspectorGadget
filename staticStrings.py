@@ -1,8 +1,12 @@
 # Search String constants
 class StringConstants:
+    versionUrl = "https://raw.githubusercontent.com/eSolcan/Warframe_InspectorGadget/main/version.txt"
+    updateUrl = "https://github.com/eSolcan/Warframe-InspectorGadget/releases/latest"
+    
     newLineString = "\n"
 
-    updateAvailableString = "Update available\n Message seal"
+    updateAvailableString = "Update available"
+    updateAvailableHyperlinkString = "Download"
 
     # Orbiter reset string
     orbiterResetString = "/Lotus/Levels/Proc/PlayerShip generating layout with segments"
@@ -149,7 +153,7 @@ class StringConstants:
     bestRoundTimeString = "Best round:"
     levelCapTimeString = "LvlCap time:"
 
-    disruptionDataDumpedString = "Run written to disk and Chart created in new tab"
+    disruptionDataDumpedString = "Run written to disk and Chart created in new Tab"
 
     # Misc strings
     scriptString = "Script"

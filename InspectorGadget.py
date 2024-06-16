@@ -384,7 +384,9 @@ class FullParser:
                     self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextNotFoundString, text_color = self.appUI.textColorRed)
 
                 # Orbiter reset
-                elif StringConstants.orbiterResetString in line or StringConstants.orbiterResetEarthString in line:
+                elif (StringConstants.orbiterResetString in line or 
+                      StringConstants.orbiterResetEarthString in line or
+                      StringConstants.abortMissionString in line):
                     # Save rollback point in case of required restart
                     self.fileRollbackPosition = self.file.tell()
 
@@ -473,7 +475,9 @@ class FullParser:
                     break 
 
                 # Orbiter reset
-                elif StringConstants.orbiterResetString in line or StringConstants.orbiterResetEarthString in line:
+                elif (StringConstants.orbiterResetString in line or 
+                      StringConstants.orbiterResetEarthString in line or
+                      StringConstants.abortMissionString in line):
                     orbiterReset = True
 
                     self.cascadeTilesFound.clear()
@@ -558,7 +562,9 @@ class FullParser:
                         break
 
                 # Orbiter reset
-                elif StringConstants.orbiterResetString in line or StringConstants.orbiterResetEarthString in line:
+                elif (StringConstants.orbiterResetString in line or 
+                      StringConstants.orbiterResetEarthString in line or
+                      StringConstants.abortMissionString in line):
                     orbiterReset = True
 
                     # Save rollback point in case of required restart
@@ -743,7 +749,9 @@ class FullParser:
                     self.disruptionRun.keysCompleted = nrKeysCompleted
 
                 # Orbiter reset - extracts all round times and dumps to file. Also creates graph in new tab
-                elif StringConstants.orbiterResetString in line or StringConstants.orbiterResetEarthString in line:
+                elif (StringConstants.orbiterResetString in line or 
+                      StringConstants.orbiterResetEarthString in line or
+                      StringConstants.abortMissionString in line):
                     
                     if self.loggingState:
                         logging.info("Orbiter reset - Disruption. Line: " + line)

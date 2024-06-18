@@ -577,6 +577,8 @@ class AppUI:
         
         self.expectedEndTimeStringDisplay.configure(text = StringConstants.disruptionExpectedEndString)
 
+        self.fullParser.missionLoadEndReached = False
+
         if self.fullParser.restartReadingBool:
             self.fullParser.restartReadingBool = False
             self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.startParsing)
@@ -672,6 +674,8 @@ class AppUI:
 
         self.foundTileDisplay.configure(text = StringConstants.waitingForMissionStart, text_color = self.textColor)
         self.missionNameDisplay.configure(text = StringConstants.replacedByMissionNameString, text_color = self.textColor)
+
+        self.fullParser.missionLoadEndReached = False
 
         self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanMissionStart) 
         

@@ -11,6 +11,7 @@ class StringConstants:
     # Orbiter reset string
     orbiterResetString = "/Lotus/Levels/Proc/PlayerShip generating layout with segments"
     orbiterResetEarthString = "/Lotus/Levels/Proc/TheNewWar/PartTwo/TNWDrifterCampMain generating layout with segments"
+    abortMissionString = "Script [Info]: TopMenu.lua: Abort: host/no session"
 
     # Various mission names
     missionNameString = "ThemedSquadOverlay.lua: Mission name:"
@@ -28,84 +29,82 @@ class StringConstants:
     disruptionMissionNames = [kappaSedna, apolloLua, olympusMars, urUranus]
 
     # Tile names for nano and poly farming
-    nanoGoodTileString = "/Lotus/Levels/InfestedCorpus/InfestedReactor.level"
-    polyGoodTileString = "/Lotus/Levels/GrineerOcean/GrineerOceanIntermediateBotanyLab.level"
-    assurGoodTileString = "/Lotus/Levels/GrineerGalleon/GrnConnectorFour.level"
+    nanoGoodTileString = "Layer /Lotus/Levels/InfestedCorpus/InfestedReactor"
+    polyGoodTileString = "Layer /Lotus/Levels/GrineerOcean/GrineerOceanIntermediateBotanyLab"
+    assurGoodTileString = "Layer /Lotus/Levels/GrineerGalleon/GrnConnectorFour"
     tileMatchesList = [nanoGoodTileString, polyGoodTileString]
 
     # Disruption toxin
     disruptionToxinPylon = "SentientArtifactMission.lua: Disruption: Level aura 15"
 
     # Kappa strings
-    kappaGrineerIntermediateString = "I: /Lotus/Levels/GrineerGalleon/GrnIntermediate"
-    kappa1 = "One.level"
-    kappa3 = "Three.level"
-    kappa4 = "Four.level"
-    kappa6 = "Six.level"
-    kappa7 = "Seven.level"
-    kappa8 = "Eight.level"
+    kappaGrineerIntermediateString = "Layer /Lotus/Levels/GrineerGalleon/GrnIntermediate"
+    kappa1 = "One"
+    kappa3 = "Three"
+    kappa4 = "Four"
+    kappa6 = "Six"
+    kappa7 = "Seven"
+    kappa8 = "Eight"
     kappaList = [kappa1, kappa3, kappa4, kappa6, kappa7, kappa8]
     kappaListForCheckbox = ["1", "3", "4", "6", "7", "8"]
 
     # Apollo strings
-    apolloMoonIntString = "I: /Lotus/Levels/OrokinMoon/MoonInt"
-    apollo1 = "BotGarden.level"
-    apollo2 = "Cloister.level"
-    apollo3 = "Endurance.level"
-    apollo4 = "HallsOfJudgement.level"
-    apollo5 = "Power.level"
-    apollo6 = "RuinedPiaza.level"
-    apollo7 = "Stealth.level"
+    apolloMoonIntString = "Layer /Lotus/Levels/OrokinMoon/MoonInt"
+    apollo1 = "BotGarden"
+    apollo2 = "Cloister"
+    apollo3 = "Endurance"
+    apollo4 = "HallsOfJudgement"
+    apollo5 = "Power"
+    apollo6 = "RuinedPiaza"
+    apollo7 = "Stealth"
     apolloList = [apollo1, apollo2, apollo3, apollo4, apollo5, apollo6, apollo7]
     apolloListForCheckbox = ["BotGarden", "Cloister", "Endurance", "HallsOfJ", "Power", "RuinedPiaza", "Stealth"]
 
     # Olympus strings
-    olympusCmpString = "I: /Lotus/Levels/GrineerSettlement/Cmp"
-    olympus1 = "Intermediate01.level"
-    olympus2 = "Intermediate02.level"
-    olympus3 = "Intermediate03.level"
-    olympus4 = "Intermediate04.level"
-    olympus5 = "Intermediate05.level"
-    olympus6 = "Intermediate06.level"
-    olympus10 = "Intermediate10.level"
-    olympus11 = "Intermediate11.level"
-    olympusAss = "Assassinate.level"
-    olympusConn3 = "Connector03.level"
+    olympusCmpString = "Layer /Lotus/Levels/GrineerSettlement/Cmp"
+    olympus1 = "Intermediate01"
+    olympus2 = "Intermediate02"
+    olympus3 = "Intermediate03"
+    olympus4 = "Intermediate04"
+    olympus5 = "Intermediate05"
+    olympus6 = "Intermediate06"
+    olympus10 = "Intermediate10"
+    olympus11 = "Intermediate11"
+    olympusAss = "Assassinate"
+    olympusConn3 = "Connector03"
     olympusList = [olympus1, olympus2, olympus3, olympus4, olympus5, olympus6, olympus10, olympus11, olympusAss, olympusConn3]
     olympusListForCheckbox = ["01", "02", "03", "04", "05", "06", "10", "11", "Ass", "Conn"]
 
     # Cascade strings
-    tuvulCommonsIntString = "I: /Lotus/Levels/Zariman/Int"
+    tuvulCommonsIntString = "Layer /Lotus/Levels/Zariman/Int"
     
     # 5 - MUST ALWAYS BE THERE
-    cascadeShuttleBay = "ShuttleBay.level"
+    cascadeShuttleBay = "ShuttleBay"
     
     # 4 - x2
-    cascadePark = "Park.level"
-    cascadePark2 = "Park2.level"
-    cascadeParkC = "ParkC.level"
-    cascadeSchool = "School.level"
+    cascadePark = "Park"
+    cascadePark2 = "Park2"
+    cascadeParkC = "ParkC"
+    cascadeSchool = "School"
     
     # 3 - passable
-    cascadeCellBlockA = "CellBlockA.level"
-    cascadeHydroponics = "Hydroponics.level"
-    cascadeCargoBay = "CargoBay.level"
-    cascadeLivingQuarters = "LivingQuarters.level"
-    cascadeIndoctrinationHall = "IndoctrinationHall.level"
-    cascadeAmphitheatre = "Amphitheatre.level"
-    cascadeLunaroCourt = "LunaroCourt.level"
+    cascadeCellBlockA = "CellBlockA"
+    cascadeHydroponics = "Hydroponics"
+    cascadeCargoBay = "CargoBay"
+    cascadeLivingQuarters = "LivingQuarters"
+    cascadeIndoctrinationHall = "IndoctrinationHall"
+    cascadeAmphitheatre = "Amphitheatre"
+    cascadeLunaroCourt = "LunaroCourt"
     cascadeListOf4 = [cascadePark, cascadePark2, cascadeParkC, cascadeSchool]
     cascadeListOf3 = [cascadeCellBlockA, cascadeHydroponics, cascadeCargoBay, cascadeLivingQuarters, cascadeIndoctrinationHall, cascadeAmphitheatre, cascadeLunaroCourt]
 
-    apolloSpeed = "Speed.level"
-
-    dotLevelString = ".level"
+    apolloSpeed = "Speed"
 
     # End of mission load strings
-    endOfMissionLoadString = "/Lotus/Levels/Backdrops"
+    endOfMissionLoadString = "Layer /Lotus/Levels/Backdrops"
     # endOfMissionLoadString = "Sb: /Lotus/Levels/Backdrops"
-    endOfMissionLoadStringKappa = "Cm: /Lotus/Levels/Backdrops/"
-    endOfMissionLoadStringCascade = "Cm: /Lotus/Levels/Backdrops/ZarimanRegion.level"
+    endOfMissionLoadStringKappa = "Layer /Lotus/Levels/Backdrops/"
+    endOfMissionLoadStringCascade = "Layer /Lotus/Levels/Backdrops/ZarimanRegion"
 
     # Various analyzer related strings
     replacedByMissionNameString = "(This will be replaced by mission name)"

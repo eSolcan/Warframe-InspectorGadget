@@ -30,7 +30,7 @@ def resource_pathAnnoying(relative_path):
 
 class FullParser:
     def __init__(self) -> None:
-        self.currentVersion = "1.3.5"
+        self.currentVersion = "1.3.6"
 
         self.currentMissionTileString = None
         self.badTileList = None
@@ -93,6 +93,8 @@ class FullParser:
         self.disruptionCurrentRound = None
 
         self.cascadeTilesFound = []
+        
+        self.missionLoadEndReached = False
 
     # Open url in web browser
     def openInBrowser(url):
@@ -250,6 +252,8 @@ class FullParser:
         self.fileRollbackPosition = self.file.tell()
         self.fileRollbackPositionSmall = self.file.tell()
 
+        self.missionLoadEndReached = False
+
         self.app.after(500, self.scanMissionStart)
 
 
@@ -337,6 +341,7 @@ class FullParser:
         else:
             self.app.after(self.sleepBetweenCalls, self.scanMissionStart) 
 
+
     # Start scanning for mission layout
     def scanMissionLayout(self):
         # Logging
@@ -355,33 +360,38 @@ class FullParser:
         else:
             while StringConstants.newLineString in line:
                 # Search for specific tiles
-                if any(x in line for x in StringConstants.tileMatchesList):
+                if (any(x in line for x in StringConstants.tileMatchesList) and not self.missionLoadEndReached):
                     self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextFoundString, text_color = self.appUI.textColorGreen)
                     self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
 
                     if self.loggingState:
                         logging.info("Found specific tile in line for mission " + self.currentMission + ". Line: " + line)
 
+                    self.missionLoadEndReached = True
                     doneHere = True
                     break
                 
-                elif StringConstants.assurUranus in self.currentMission and StringConstants.assurGoodTileString in line:
-                    doneHere = True
+                elif (StringConstants.assurUranus in self.currentMission and StringConstants.assurGoodTileString in line and not self.missionLoadEndReached):
                     self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextFoundString, text_color = self.appUI.textColorGreen)
                     self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
 
                     if self.loggingState:
                         logging.info("Found specific tile in line for mission " + self.currentMission + ". Line: " + line)
 
+                    self.missionLoadEndReached = True
                     doneHere = True
                     break
 
                 # End of mission load, means all the layout has been parsed and found, will simply continue parsing until Orbiter Reset is found
-                elif StringConstants.endOfMissionLoadString in line:
+                elif (StringConstants.endOfMissionLoadString in line and not self.missionLoadEndReached):
                     if self.loggingState:
                         logging.info("End of mission load found. Will await for mission reset.")
 
+                    self.missionLoadEndReached = True
+
                     self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextNotFoundString, text_color = self.appUI.textColorRed)
+                    
+                    break
 
                 # Orbiter reset
                 elif (StringConstants.orbiterResetString in line or 
@@ -414,7 +424,7 @@ class FullParser:
         elif orbiterReset:
             self.app.after(self.sleepBetweenCalls, self.appUI.resetDisplay) 
         elif doneHere:
-            self.app.after(self.sleepBetweenCalls * self.sleepBetweenCallsMultiplier, self.appUI.resetDisplay)
+            self.app.after(self.sleepBetweenCalls * self.sleepBetweenCallsMultiplier, self.scanMissionLayout)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanMissionLayout) 
 
@@ -437,17 +447,22 @@ class FullParser:
         else:
             while StringConstants.newLineString in line:
                 # Search for tiles, will find the two main rooms of the tileset
-                if StringConstants.tuvulCommonsIntString in line:            
+                if StringConstants.tuvulCommonsIntString in line:                                
                     tempLine = line.split(StringConstants.tuvulCommonsIntString, 1)[1]
+                    tempLine = tempLine.split("/", 1)[0]
                     tempLine = tempLine.rstrip()
-                    self.cascadeTilesFound.append(tempLine)
+                    
+                    if(not self.missionLoadEndReached):
+                        self.cascadeTilesFound.append(tempLine)
 
-                    if self.loggingState:
-                        logging.info("Found cascade tile in Line: " + line)
+                        if self.loggingState:
+                            logging.info("Found cascade tile in Line: " + line)
 
                 # End of mission load, display tiles
-                elif StringConstants.endOfMissionLoadStringCascade in line:
+                elif StringConstants.endOfMissionLoadString in line:
                     sumOfTiles = ""
+                    
+                    self.missionLoadEndReached = True
                     
                     for x in self.cascadeTilesFound:
                         # Check if layout has 5
@@ -458,6 +473,7 @@ class FullParser:
                         elif x in StringConstants.cascadeListOf4:
                             sumOfTiles = sumOfTiles + "4"
                     
+                        # Check if layout has 3
                         elif x in StringConstants.cascadeListOf3:
                             sumOfTiles = sumOfTiles + "3"
                             
@@ -465,12 +481,12 @@ class FullParser:
                         self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
                         self.appUI.foundTileDisplay.configure(text = sumOfTiles, text_color = self.appUI.textColorGreen)
     
-                        doneHere = True
                     else:
                         self.appUI.foundTileDisplay.configure(text = sumOfTiles + " - Reset", text_color = self.appUI.textColorRed)
 
                     if self.loggingState:
-                        logging.info("Cascade tiles found: " + self.cascadeTilesFound[0] + " " + self.cascadeTilesFound[1] + " " + self.cascadeTilesFound[2])
+                        for x in self.cascadeTilesFound:
+                            logging.info("Cascade tile found: " + x)
 
                     break 
 
@@ -506,8 +522,6 @@ class FullParser:
             return 
         elif orbiterReset:
             self.app.after(self.sleepBetweenCalls, self.appUI.resetDisplay) 
-        elif doneHere:
-            self.app.after(self.sleepBetweenCalls * self.sleepBetweenCallsMultiplier, self.appUI.resetDisplay)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanCascadeLayout) 
 
@@ -532,17 +546,22 @@ class FullParser:
                 # Search for tiles, will find the two main rooms of the tileset
                 if self.currentMissionTileString in line:            
                     tempLine = line.split(self.currentMissionTileString, 1)[1]
+                    tempLine = tempLine.split("/", 1)[0]
                     tempLine = tempLine.rstrip()
-                    self.disruptionTilesFoundList.append(tempLine)
-
-                    if self.loggingState:
-                        logging.info("Found disruption tile in Line: " + line)
+                    
+                    if(not self.missionLoadEndReached):
+                        self.disruptionTilesFoundList.append(tempLine)
+                        
+                        if self.loggingState:
+                            logging.info("Found disruption tile in Line: " + line)                    
 
                 # End of mission load, display tiles
-                elif StringConstants.endOfMissionLoadStringKappa in line:
+                elif StringConstants.endOfMissionLoadString in line:
 
-                    tile1 = self.disruptionTilesFoundList[0].split(StringConstants.dotLevelString, 1)[0]
-                    tile2 = self.disruptionTilesFoundList[1].split(StringConstants.dotLevelString, 1)[0]
+                    self.missionLoadEndReached = True
+
+                    tile1 = self.disruptionTilesFoundList[0]
+                    tile2 = self.disruptionTilesFoundList[1]
 
                     self.appUI.foundTileDisplay.configure(text = tile1 + " + " + tile2, text_color = self.appUI.textColor)
 
@@ -798,6 +817,7 @@ class FullParser:
             self.app.after(self.sleepBetweenCalls, self.saveTimesAndDumpJson)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanDisruptionProgress) 
+
 
 # Class that stores all disruption run information (rounds, avg, etc)
 class DisruptionRun:

@@ -30,7 +30,7 @@ def resource_pathAnnoying(relative_path):
 
 class FullParser:
     def __init__(self) -> None:
-        self.currentVersion = "1.3.6"
+        self.currentVersion = "1.3.7"
 
         self.currentMissionTileString = None
         self.badTileList = None
@@ -550,7 +550,13 @@ class FullParser:
                     tempLine = tempLine.rstrip()
                     
                     if(not self.missionLoadEndReached):
-                        self.disruptionTilesFoundList.append(tempLine)
+                        # Stupid ass olympus got changed in Jade update, need to check all tiles in it
+                        if StringConstants.olympusMars in self.currentMission:
+                            for x in StringConstants.olympusList:
+                                if x in tempLine:
+                                    self.disruptionTilesFoundList.append(tempLine) 
+                        else:
+                            self.disruptionTilesFoundList.append(tempLine)
                         
                         if self.loggingState:
                             logging.info("Found disruption tile in Line: " + line)                    

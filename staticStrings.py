@@ -83,7 +83,7 @@ class StringConstants:
     
     # 4 - x2
     cascadePark = "Park"
-    cascadePark2 = "Park2"
+    cascadeParkB = "ParkB"
     cascadeParkC = "ParkC"
     cascadeSchool = "School"
     
@@ -95,7 +95,7 @@ class StringConstants:
     cascadeIndoctrinationHall = "IndoctrinationHall"
     cascadeAmphitheatre = "Amphitheatre"
     cascadeLunaroCourt = "LunaroCourt"
-    cascadeListOf4 = [cascadePark, cascadePark2, cascadeParkC, cascadeSchool]
+    cascadeListOf4 = [cascadePark, cascadeParkB, cascadeParkC, cascadeSchool]
     cascadeListOf3 = [cascadeCellBlockA, cascadeHydroponics, cascadeCargoBay, cascadeLivingQuarters, cascadeIndoctrinationHall, cascadeAmphitheatre, cascadeLunaroCourt]
 
     apolloSpeed = "Speed"

@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 from json import JSONDecoder, JSONEncoder
+from staticStrings import StringConstants
 
 class MqttConnection:
 
@@ -52,8 +53,12 @@ class MqttConnection:
             if(receivedDataJson["resetToOrbiterBoolean"]):
                 self.appUi.resetAnalyzerUI()
                 self.appUi.resetDisplay()
+                if(self.fullParser.overlayWindow != None):
+                    self.fullParser.overlayWindow.updateOverlayWithTextRaw(StringConstants.orbiterResetOverlayDisplayString)
             elif(receivedDataJson["missionName"] != ""):
                 self.appUi.displayMissionAndTiles(receivedDataJson["missionName"], receivedDataJson["tiles"], receivedDataJson["goodTilesBoolean"])
+                if(self.fullParser.overlayWindow != None):
+                    self.fullParser.overlayWindow.updateOverlayWithTextRaw(receivedDataJson["tiles"])
             elif(receivedDataJson["totalRoundTimeInSeconds"] != ""):
                 self.appUi.displayDisruptionRoundFromHostData(receivedDataJson)
                 if(self.fullParser.overlayWindow != None):

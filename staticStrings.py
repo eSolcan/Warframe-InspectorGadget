@@ -14,6 +14,7 @@ class StringConstants:
     
     openOverlayString = "Open Overlay"
     closeOverlayString = "Close Overlay"
+    orbiterResetOverlayDisplayString = "Orbiter Reset"
 
     # Orbiter reset string
     orbiterResetString = "/Lotus/Levels/Proc/PlayerShip generating layout with segments"

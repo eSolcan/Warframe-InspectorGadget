@@ -107,6 +107,9 @@ class InspectorAppOverlayUI:
                                     expectedEnd
                                     )
         
+    def updateOverlayWithTextRaw(self, textToDisplay):
+        self.overlayLabel.configure(text = textToDisplay)
+    
     def updateThingsBasedOnNewFontSize(self, newFontSize):
         self.overlayFontSize = newFontSize
                     

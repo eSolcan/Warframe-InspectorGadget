@@ -600,9 +600,11 @@ class FullParser:
                     tile1 = self.disruptionTilesFoundList[0]
                     tile2 = self.disruptionTilesFoundList[1]
 
-
                     tileDisplayString = tile1 + " + " + tile2
                     self.appUI.foundTileDisplay.configure(text = tileDisplayString, text_color = self.appUI.textColor)
+                    
+                    if(self.overlayWindow != None):
+                        self.overlayWindow.updateOverlayWithTextRaw(tileDisplayString)
                                         
                     if self.loggingState:
                         logging.info("Disruption tiles found: " + self.disruptionTilesFoundList[0] + " " + self.disruptionTilesFoundList[1])
@@ -664,6 +666,9 @@ class FullParser:
         elif orbiterReset:
             JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
             self.connection.publishMessage(JSONData) 
+            
+            if(self.overlayWindow != None):
+                self.overlayWindow.updateOverlayWithTextRaw(StringConstants.orbiterResetOverlayDisplayString)
             
             self.app.after(self.sleepBetweenCalls, self.appUI.resetDisplay) 
         elif doneHere:            
@@ -834,7 +839,8 @@ class FullParser:
                     clientDataToSend.currentAvg = averageRealTimeValue
                     clientDataToSend.bestRound = self.disruptionRun.bestRunTimeString + " (r" + str(len(self.disruptionRun.rounds)) + ")"
                     
-                    self.overlayWindow.displayDisruptionRoundData(self.disruptionCurrentRound.totalRoundTimeInSecondsString, timeToDisplayOnOverlay_ExpectedOrEnd)
+                    if(self.overlayWindow != None):
+                        self.overlayWindow.displayDisruptionRoundData(self.disruptionCurrentRound.totalRoundTimeInSecondsString, timeToDisplayOnOverlay_ExpectedOrEnd)
                     
                     JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
                     self.connection.publishMessage(JSONData)
@@ -894,12 +900,18 @@ class FullParser:
             JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
             self.connection.publishMessage(JSONData)
             
+            if(self.overlayWindow != None):
+                self.overlayWindow.updateOverlayWithTextRaw(StringConstants.orbiterResetOverlayDisplayString)
+            
             self.app.after(self.sleepBetweenCalls, self.appUI.resetAnalyzerUI)
         elif orbiterReset:
             clientDataToSend = DataForClients()
             clientDataToSend.resetToOrbiterBoolean = True
             JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
             self.connection.publishMessage(JSONData)
+            
+            if(self.overlayWindow != None):
+                self.overlayWindow.updateOverlayWithTextRaw(StringConstants.orbiterResetOverlayDisplayString)
             
             self.app.after(self.sleepBetweenCalls, self.saveTimesAndDumpJson)
         else:

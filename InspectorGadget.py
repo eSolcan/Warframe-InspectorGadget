@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import string
 import sys
 import tkinter
 import webbrowser
@@ -16,6 +17,9 @@ from staticStrings import StringConstants
 from AppUI import AppUI
 from playsound import playsound
 import requests
+import threading
+import MqttConnection
+import random
 
 requestVersionContent = requests.get(StringConstants.versionUrl)
 
@@ -78,6 +82,8 @@ class FullParser:
         self.app.title("InspectorGadget")
         self.app.iconbitmap(appLogo)
         self.app.attributes('-topmost', True)
+        
+        # self.app.attributes('-transparentcolor', 'white', '-topmost', 1)        
         # self.app.attributes('-alpha', 0.5)
 
         # Class that manages all UI elements
@@ -95,20 +101,42 @@ class FullParser:
         self.cascadeTilesFound = []
         
         self.missionLoadEndReached = False
+        
+        # Randomly generated string for clients to connect to
+        self.hostCodeLength = 14
+        self.hostCodeString = "kappa_" + ''.join(random.choices(string.ascii_letters + string.digits, k = self.hostCodeLength))
+        self.appUI.hostCodeActualDisplay.configure(text = self.hostCodeString)
+        
+        self.connectedToHostBool = False
+        self.connectedToHostString = ""
+        
+        # New thread to run the mqtt connection
+        self.connection = MqttConnection.MqttConnection(self, self.appUI, self.hostCodeString)
+        self.connection.startConnection()
+        
+    #     self.app. overrideredirect(True)
+    #     self.app.bind("<ButtonPress-1>", self.start_move)
+    #     self.app.bind("<ButtonRelease-1>", self.stop_move)
+    #     self.app.bind("<B1-Motion>", self.do_move)
+        
+    # def start_move(self, event):
+    #     self.x = event.x
+    #     self.y = event.y
 
+    # def stop_move(self, event):
+    #     self.x = None
+    #     self.y = None
+
+    # def do_move(self, event):
+    #     deltax = event.x - self.x
+    #     deltay = event.y - self.y
+    #     x = self.app.winfo_x() + deltax
+    #     y = self.app.winfo_y() + deltay
+    #     self.app.geometry(f"+{x}+{y}")
+        
     # Open url in web browser
     def openInBrowser(url):
         webbrowser.open_new_tab(url)
-
-    # # Get absolute path to resource, used for images so that they can be added to .exe
-    # def resource_path(relative_path):
-    #     try:
-    #         # PyInstaller creates a temp folder and stores path in _MEIPASS
-    #         base_path = sys._MEIPASS
-    #     except Exception:
-    #         base_path = os.path.abspath(".")
-
-    #     return os.path.join(base_path, relative_path)
 
     # Extract all round times, convert class to json and dump to file
     def saveTimesAndDumpJson(self):
@@ -569,22 +597,34 @@ class FullParser:
                     tile1 = self.disruptionTilesFoundList[0]
                     tile2 = self.disruptionTilesFoundList[1]
 
-                    self.appUI.foundTileDisplay.configure(text = tile1 + " + " + tile2, text_color = self.appUI.textColor)
 
+                    tileDisplayString = tile1 + " + " + tile2
+                    self.appUI.foundTileDisplay.configure(text = tileDisplayString, text_color = self.appUI.textColor)
+                                        
                     if self.loggingState:
                         logging.info("Disruption tiles found: " + self.disruptionTilesFoundList[0] + " " + self.disruptionTilesFoundList[1])
+
+                    clientDataToSend = DataForClients()
 
                     # If any of the selected bad tiles is found, display reset text
                     if any(x in self.badTileList for x in self.disruptionTilesFoundList):
                         self.appUI.missionNameDisplay.configure(text = StringConstants.kappaShouldResetString, text_color = self.appUI.textColorRed)
+                        clientDataToSend.goodTilesBoolean = False
                     else:
                         self.appUI.missionNameDisplay.configure(text = StringConstants.kappaUsableTileString, text_color = self.appUI.textColorGreen)
+                        clientDataToSend.goodTilesBoolean = True
                         
                         doneHere = True
-
                         # Create disruption run that will store all round information
-                        self.disruptionRun = DisruptionRun()                        
-                        break
+                        self.disruptionRun = DisruptionRun()      
+                        
+                    # Client data to send
+                    clientDataToSend.missionName = self.currentMission
+                    clientDataToSend.tiles = tileDisplayString
+                    JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
+                    self.connection.publishMessage(JSONData)                   
+                    
+                    break
 
                 # Orbiter reset
                 elif (StringConstants.orbiterResetString in line or 
@@ -592,11 +632,15 @@ class FullParser:
                       StringConstants.abortMissionString in line):
                     orbiterReset = True
 
+                    clientDataToSend = DataForClients()
+                    clientDataToSend.resetToOrbiterBoolean = True
+
                     # Save rollback point in case of required restart
                     self.fileRollbackPosition = self.file.tell()
 
                     if self.loggingState:
                         logging.info("Orbiter reset found in disruption. Line: " + line)
+                    
                     break
 
                 # Save rollback point here. Check next line and decide what to do based on it
@@ -615,9 +659,11 @@ class FullParser:
         if self.restartReadingBool:
             return 
         elif orbiterReset:
+            JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
+            self.connection.publishMessage(JSONData) 
+            
             self.app.after(self.sleepBetweenCalls, self.appUI.resetDisplay) 
-        elif doneHere:
-            # self.app.after(self.sleepBetweenCalls, self.updateUIForDisruptionLogging())
+        elif doneHere:            
             self.app.after(self.sleepBetweenCalls * self.sleepBetweenCallsMultiplier, self.appUI.updateUIForDisruptionLogging)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanDisruptionLayout) 
@@ -722,6 +768,8 @@ class FullParser:
                 elif StringConstants.disruptionRoundFinishedString in line:
                     lineTime = line.split(StringConstants.scriptString, 1)[0]
                     trimmedTime = re.sub(r'[^0-9.]', '', lineTime)
+                    
+                    clientDataToSend = DataForClients()
 
                     self.disruptionCurrentRound.roundTimeEndInSeconds = float(trimmedTime)
                     self.disruptionCurrentRound.totalRoundTimeInSeconds = float(trimmedTime) - float(self.disruptionCurrentRound.roundTimeStartInSeconds)
@@ -744,6 +792,8 @@ class FullParser:
                         totalRunTimeExpected = str(datetime.timedelta(seconds = totalRunTimeExpectedSeconds))[0:7]
                         self.appUI.expectedEndTimeDisplay.configure(text = totalRunTimeExpected)
 
+                        clientDataToSend.expectedEnd = totalRunTimeExpected
+
                     elif len(self.disruptionRun.rounds) == 45:
                         if self.loggingState:
                             logging.info("Levelcap reached. Saving relevant information. Levelcap Line: " + line)
@@ -757,6 +807,8 @@ class FullParser:
                         else:
                             self.disruptionRun.levelcapTimeDurationString = str(datetime.timedelta(seconds = self.disruptionRun.levelcapTimeDurationSeconds))[0:11]
 
+                        clientDataToSend.expectedEnd = self.disruptionRun.levelcapTimeDurationString
+
                         self.appUI.expectedEndTimeStringDisplay.configure(text = StringConstants.levelCapTimeString)
                         self.appUI.expectedEndTimeDisplay.configure(text = self.disruptionRun.levelcapTimeDurationString)
 
@@ -767,6 +819,16 @@ class FullParser:
                         self.disruptionRun.bestRunTimeRoundNr = len(self.disruptionRun.rounds)
                         extraString = " (r" + str(len(self.disruptionRun.rounds)) + ")"
                         self.appUI.bestRoundTimeDisplay.configure(text = realTimeValue + extraString)
+                        
+                    # Send data to client                    
+                    clientDataToSend.keyInsertTimes = self.disruptionCurrentRound.keyInsertTimesString
+                    clientDataToSend.demoKillTimes = self.disruptionCurrentRound.demoKillTimesString
+                    clientDataToSend.totalRoundTimeInSeconds = self.disruptionCurrentRound.totalRoundTimeInSecondsString
+                    clientDataToSend.currentAvg = averageRealTimeValue
+                    clientDataToSend.bestRound = self.disruptionRun.bestRunTimeString + " (r" + str(len(self.disruptionRun.rounds)) + ")"
+                    
+                    JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
+                    self.connection.publishMessage(JSONData)
 
                 # Update total keys completed
                 elif StringConstants.disruptionTotalKeysCompleted in line:
@@ -792,7 +854,7 @@ class FullParser:
                         # If last round was not finished, remove it from list of rounds
                         if self.disruptionRun.rounds[len(self.disruptionRun.rounds) - 1].totalRoundTimeInSeconds == 0:
                             self.disruptionRun.rounds.pop()
-                            currentRoundShown = len(self.disruptionRun.rounds)
+                            self.currentRoundShown = len(self.disruptionRun.rounds)
 
                             self.appUI.disruptionRoundInputBox.delete('0.0', 'end')
                             self.appUI.disruptionRoundInputBox.insert('end', len(self.disruptionRun.rounds))
@@ -818,11 +880,22 @@ class FullParser:
         if self.restartReadingBool:
             return
         elif toTheStart:
+            clientDataToSend = DataForClients()
+            clientDataToSend.resetToOrbiterBoolean = True
+            JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
+            self.connection.publishMessage(JSONData)
+            
             self.app.after(self.sleepBetweenCalls, self.appUI.resetAnalyzerUI)
         elif orbiterReset:
+            clientDataToSend = DataForClients()
+            clientDataToSend.resetToOrbiterBoolean = True
+            JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
+            self.connection.publishMessage(JSONData)
+            
             self.app.after(self.sleepBetweenCalls, self.saveTimesAndDumpJson)
         else:
             self.app.after(self.sleepBetweenCalls, self.scanDisruptionProgress) 
+
 
 
 # Class that stores all disruption run information (rounds, avg, etc)
@@ -854,18 +927,36 @@ class DisruptionRound:
         self.roundTimeStartInSeconds = 0
         self.roundTimeEndInSeconds = 0
         self.totalRoundTimeInSeconds = 0
-
+        
         # String values
         self.keyInsertTimesString = [None, None, None, None]
         self.demoKillTimesString = [None, None, None, None]
         self.totalRoundTimeInSecondsString = None
+
+# Class to be sent over network to connected clients
+class DataForClients:
+    def __init__(self) -> None:
+        self.keyInsertTimes = []
+        self.demoKillTimes = []
+        
+        self.totalRoundTimeInSeconds = ""
+        self.currentAvg = ""
+        self.bestRound = ""
+        self.expectedEnd = ""
+        
+        self.missionName = ""
+        self.tiles = ""
+        self.goodTilesBoolean = False
+        self.resetToOrbiterBoolean = False
+        
+
 
 # Allows for serialization of other class, to convert to Json
 class DisruptionJsonEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__ 
 
-# Class used to dump all run times to disk, will be converted to json using the function bellow
+# Class used to dump all run times to disk, will be converted to json
 class DisruptionRunTimesJson:
     def __init__(self) -> None:
         self.runTimesInSeconds = []

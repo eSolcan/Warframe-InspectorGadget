@@ -7,6 +7,8 @@ class StringConstants:
 
     updateAvailableString = "Update available"
     updateAvailableHyperlinkString = "Download"
+    
+    hostCodeDisplayString = "Host code/Connect to"
 
     # Orbiter reset string
     orbiterResetString = "/Lotus/Levels/Proc/PlayerShip generating layout with segments"

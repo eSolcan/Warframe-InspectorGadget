@@ -7,12 +7,12 @@ import webbrowser
 import customtkinter
 import os
 from PIL import Image
-import re
 from json import JSONEncoder
 import matplotlib.pyplot as plt
 import numpy as np
-import tkchart
 from staticStrings import StringConstants
+import pyperclip
+import time
 
 # Get absolute path to resource, used for images so that they can be added to .exe
 def resource_path(relative_path):
@@ -34,6 +34,13 @@ class AppUI:
     textColorRed = "red"
     textColorGreen = "green"
     textColorHyperlink = "#4499e3"
+    
+    buttonBlueColor = "#1F6AA5"
+    buttonBlueColorHover = "#144870"
+    buttonRedColor = "red"
+    buttonRedColorHover = "red"
+    buttonGreenColor = "green"
+    buttonGreenColorHover = "#14701D"
 
     # Line and Column values for various UI elements
     columnRelValues = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]
@@ -109,18 +116,45 @@ class AppUI:
                                                    )
         self.alwaysOnTopCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[2], anchor = "w")
 
-        # Play sound for toxin
-        # self.playToxinSoundCheckBoxValue = customtkinter.StringVar(value = "off")
-
-        # self.playToxinSoundCheckBox = customtkinter.CTkCheckBox(self.settingsWindow, 
-        #                                            text = "Play Toxin Weapon sound", 
-        #                                            command = self.playToxinSoundCheckBox_event, 
-        #                                            variable = self.playToxinSoundCheckBoxValue, 
-        #                                            onvalue = "on", 
-        #                                            offvalue = "off", 
-        #                                            font = ("Arial", 14)
-        #                                            )
-        # self.playToxinSoundCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[4], anchor = "w")
+        # Host/client network code connection related things
+        self.hostCodeStringDisplay = customtkinter.CTkLabel(self.settingsWindow, text = StringConstants.hostCodeDisplayString, text_color = self.textColor, font = ("Arial", 18))
+        self.hostCodeStringDisplay.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[4], anchor = "w")
+        
+        self.hostCodeActualDisplay = customtkinter.CTkLabel(self.settingsWindow, text = "", text_color = self.textColor, font = ("Arial", 14))
+        self.hostCodeActualDisplay.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[5] - .035, anchor = "w")
+            
+        self.copyCodeToClipboardButton = customtkinter.CTkButton(
+            self.settingsWindow,
+            text = "Copy",
+            font = ("Arial", 14, "bold"),
+            width = 80,
+            height = 30,
+            command = self.copyCodeToClipboardFunction
+        )
+        self.copyCodeToClipboardButton.place(relx = self.columnRelValues[2] + .028, rely = self.lineRelValues[5] - .035, anchor = "w")
+        
+        self.connectToHostButton = customtkinter.CTkButton(
+            self.settingsWindow,
+            text = "Connect",
+            font = ("Arial", 14, "bold"),
+            width = 80,
+            height = 30,
+            fg_color = "#1F6AA5",
+            command = self.connectToHostFunction
+        )
+        self.connectToHostButton.place(relx = self.columnRelValues[2] + .028, rely = self.lineRelValues[6] - .06, anchor = "w")
+        
+        self.hostCodeInputBox = customtkinter.CTkTextbox(
+            self.settingsWindow, 
+            width = 170, 
+            height = 20, 
+            corner_radius = 4,
+            border_width = 1,
+            activate_scrollbars = False,
+            wrap = "none"
+        )
+        self.hostCodeInputBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[6] - .06, anchor = "w")
+        
 
         # Parse from file start checkbox
         self.parseFromStartCheckBoxValue = customtkinter.StringVar(value = "off")
@@ -579,11 +613,12 @@ class AppUI:
 
         self.fullParser.missionLoadEndReached = False
 
-        if self.fullParser.restartReadingBool:
-            self.fullParser.restartReadingBool = False
-            self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.startParsing)
-        else:
-            self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanMissionStart)
+        if(not self.fullParser.connectedToHostBool):
+            if self.fullParser.restartReadingBool:
+                self.fullParser.restartReadingBool = False
+                self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.startParsing)
+            else:
+                self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanMissionStart)
 
     # Update UI to be ready for disruption run logging. Removes most other elements, adds new elements back in
     def updateUIForDisruptionLogging(self):
@@ -617,16 +652,18 @@ class AppUI:
         self.expectedEndTimeDisplay.place(relx = self.columnRelValuesDisruption[4], rely = self.lineRelValuesDisruption[3], anchor = "center")
         self.bestRoundTimeDisplay.place(relx = self.columnRelValuesDisruption[4], rely = self.lineRelValuesDisruption[2], anchor = "center")
 
-        self.previousRoundButton.place(relx = .42, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
-        self.nextRoundButton.place(relx = .455, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
+        if(not self.fullParser.connectedToHostBool):
+            self.previousRoundButton.place(relx = .42, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
+            self.nextRoundButton.place(relx = .455, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
 
-        self.disruptionRoundInputBox.place(relx = .5, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
-        self.updateFromInputButton.place(relx = .56, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
+            self.disruptionRoundInputBox.place(relx = .5, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
+            self.updateFromInputButton.place(relx = .56, rely = self.columnRelValuesDisruption[5] - .05, anchor = "c")
 
         if self.fullParser.loggingState:
             logging.info("updateUIForDisruptionLogging() finished, moving to scanDisruptionProgress()")
 
-        self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanDisruptionProgress)
+        if(not self.fullParser.connectedToHostBool):
+            self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanDisruptionProgress)
 
     # Clean current disruption round values
     def cleanDisruptionUI(self):
@@ -677,7 +714,8 @@ class AppUI:
 
         self.fullParser.missionLoadEndReached = False
 
-        self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanMissionStart) 
+        if(not self.fullParser.connectedToHostBool):
+            self.app.after(self.fullParser.sleepBetweenCalls, self.fullParser.scanMissionStart) 
         
     # Used to toggle the button that allows for the parsing of new run after one has been finished
     def toggleNewRunButton(self, newState):
@@ -691,3 +729,71 @@ class AppUI:
         self.toggleNewRunButton(False)
         self.resetAnalyzerUI()
     
+    # Used to copy host code to clipboard
+    def copyCodeToClipboardFunction(self):
+        pyperclip.copy(self.fullParser.hostCodeString)
+        self.copyCodeToClipboardButton.configure(text = "Copied")
+        
+        self.app.after(1500, self.revertCopyCodeButtonText)
+        
+    # Used to revert back to copy host code on the button
+    def revertCopyCodeButtonText(self):
+        self.copyCodeToClipboardButton.configure(text = "Copy")
+        
+        
+    # Used to copy host code to clipboard
+    def connectToHostFunction(self):
+        codeToConnect = str(self.hostCodeInputBox.get('1.0', "end-1c"))
+        codeToConnect = codeToConnect.replace(" ", "")
+                
+        if(len(codeToConnect) == 20 and codeToConnect != self.fullParser.hostCodeString):
+            self.fullParser.connectedToHostString = codeToConnect
+            self.fullParser.connectedToHostBool = True
+            self.fullParser.restartReadingBool = True
+            self.connectToHostButton.configure(text = "Done", fg_color = self.buttonGreenColor, hover_color = self.buttonGreenColorHover)
+            
+            
+            self.fullParser.connection.stopConnection()
+            
+            self.app.after(self.fullParser.sleepBetweenCalls + 100, self.resetAnalyzerUI)
+            
+        else:
+            self.connectToHostButton.configure(text = "Buh", fg_color = self.buttonRedColor, hover_color = self.buttonRedColorHover)
+            
+        self.hostCodeInputBox.delete('0.0', 'end')
+        self.hostCodeInputBox.insert('end', "")
+        
+        self.app.after(1500, self.revertConnectToHostButtonText, codeToConnect)
+        
+    # Used to revert back to copy host code on the button
+    def revertConnectToHostButtonText(self, codeToConnect):
+        self.fullParser.connection.mqttTopic = codeToConnect
+        self.fullParser.connection.startConnection()
+        
+        self.fullParser.restartReadingBool = False
+        self.connectToHostButton.configure(text = "Connect", fg_color = self.buttonBlueColor, hover_color = self.buttonBlueColorHover)
+    
+    def displayMissionAndTiles(self, missionName, tiles, goodTilesBoolean):
+        text_colorNew = ""
+        if(goodTilesBoolean):
+            text_colorNew = self.textColorGreen
+        else:
+            text_colorNew = self.textColorRed
+                    
+        self.foundTileDisplay.configure(text = tiles)
+        self.missionNameDisplay.configure(text = missionName, text_color = text_colorNew)
+        
+        self.app.after(5000, self.updateUIForDisruptionLogging)
+        
+    def displayDisruptionRoundFromHostData(self, dataFromHost):
+        i = 0
+        for x in dataFromHost["keyInsertTimes"]:
+            self.keyDisplays[i].configure(text = dataFromHost["keyInsertTimes"][i])
+            self.demoDisplays[i].configure(text = dataFromHost["demoKillTimes"][i])
+            i += 1
+            
+        self.previousRoundTimeDisplay.configure(text = dataFromHost["totalRoundTimeInSeconds"])
+        self.currentAverageDisplay.configure(text = dataFromHost["currentAvg"])
+        self.bestRoundTimeDisplay.configure(text = dataFromHost["bestRound"])
+        self.expectedEndTimeDisplay.configure(text = dataFromHost["expectedEnd"])
+        

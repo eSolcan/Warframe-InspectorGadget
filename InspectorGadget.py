@@ -17,7 +17,6 @@ from staticStrings import StringConstants
 from AppUI import AppUI
 from playsound import playsound
 import requests
-import threading
 import MqttConnection
 import random
 
@@ -54,7 +53,7 @@ class FullParser:
         self.fileRollbackPosition = None
         self.fileRollbackPositionSmall = None
         self.restartReadingBool = False
-        self.playToxinSound = False
+        self.playToxinSound = True
 
         # Time to sleep between each parsing progression, in millis
         self.sleepBetweenCalls = 1000
@@ -81,14 +80,13 @@ class FullParser:
         self.app.geometry("960x512")
         self.app.title("InspectorGadget")
         self.app.iconbitmap(appLogo)
-        self.app.attributes('-topmost', True)
+        self.app.attributes('-topmost', True)    
         
-        # self.app.attributes('-transparentcolor', 'white', '-topmost', 1)        
-        # self.app.attributes('-alpha', 0.5)
+        self.overlayWindow = None
 
         # Class that manages all UI elements
-        self.appUI = AppUI(self, self.app)
-
+        self.appUI = AppUI(self, self.app, self.overlayWindow)
+        
         # Misc variables
         self.currentRoundShown = -1
         self.currentKeysInserted = 0
@@ -107,6 +105,7 @@ class FullParser:
         self.hostCodeString = "kappa_" + ''.join(random.choices(string.ascii_letters + string.digits, k = self.hostCodeLength))
         self.appUI.hostCodeActualDisplay.configure(text = self.hostCodeString)
         
+        self.selfWarframeUsername = ""
         self.connectedToHostBool = False
         self.connectedToHostString = ""
         
@@ -114,25 +113,16 @@ class FullParser:
         self.connection = MqttConnection.MqttConnection(self, self.appUI, self.hostCodeString)
         self.connection.startConnection()
         
-    #     self.app. overrideredirect(True)
-    #     self.app.bind("<ButtonPress-1>", self.start_move)
-    #     self.app.bind("<ButtonRelease-1>", self.stop_move)
-    #     self.app.bind("<B1-Motion>", self.do_move)
-        
-    # def start_move(self, event):
-    #     self.x = event.x
-    #     self.y = event.y
-
-    # def stop_move(self, event):
-    #     self.x = None
-    #     self.y = None
-
-    # def do_move(self, event):
-    #     deltax = event.x - self.x
-    #     deltay = event.y - self.y
-    #     x = self.app.winfo_x() + deltax
-    #     y = self.app.winfo_y() + deltay
-    #     self.app.geometry(f"+{x}+{y}")
+    # def setClickthrough(self, hwnd):
+    #     print("setting window properties")
+    #     try:
+    #         styles = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+    #         styles = win32con.WS_EX_LAYERED | win32con.WS_EX_TRANSPARENT
+    #         win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, styles)
+    #         win32gui.SetLayeredWindowAttributes(hwnd, 0, 255, win32con.LWA_ALPHA)
+    #     except Exception as e:
+    #         print(e)
+            
         
     # Open url in web browser
     def openInBrowser(url):
@@ -269,6 +259,19 @@ class FullParser:
             self.app.after(self.sleepBetweenCalls, self.startParsing)
             return
             
+        # Get local warframe username
+        self.file.seek(0)
+        line = self.file.readline()  
+        while StringConstants.newLineString in line:
+            if StringConstants.loggedInString in line:
+                usernameTemp = line.split(StringConstants.loggedInString, 1)[1]
+                self.selfWarframeUsername = usernameTemp.split(" (", 1)[0].rstrip()
+                self.file.seek(0, 2)
+                
+                break
+    
+            line = self.file.readline()  
+                
         # Start from end/beginning of file
         if self.parseFromEnd:
             self.file.seek(0, 2)
@@ -737,7 +740,7 @@ class FullParser:
 
                     self.appUI.keyDisplays[self.currentKeysInserted].configure(text = realTimeValue)
                     self.currentKeysInserted += 1
-
+                    
                 # Defense finished (1 key, not full round)
                 elif StringConstants.disruptionDefenseFinishedString in line:
                     lineTime = line.split(StringConstants.scriptString, 1)[0]
@@ -784,6 +787,8 @@ class FullParser:
 
                     self.appUI.previousRoundTimeDisplay.configure(text = realTimeValue)
 
+                    timeToDisplayOnOverlay_ExpectedOrEnd = None
+
                     # Update expected 46 round end time. Stops updating after 46 reached
                     if len(self.disruptionRun.rounds) < 45: 
                         roundsLeft = 45 - len(self.disruptionRun.rounds)
@@ -793,6 +798,7 @@ class FullParser:
                         self.appUI.expectedEndTimeDisplay.configure(text = totalRunTimeExpected)
 
                         clientDataToSend.expectedEnd = totalRunTimeExpected
+                        timeToDisplayOnOverlay_ExpectedOrEnd = totalRunTimeExpected
 
                     elif len(self.disruptionRun.rounds) == 45:
                         if self.loggingState:
@@ -808,7 +814,8 @@ class FullParser:
                             self.disruptionRun.levelcapTimeDurationString = str(datetime.timedelta(seconds = self.disruptionRun.levelcapTimeDurationSeconds))[0:11]
 
                         clientDataToSend.expectedEnd = self.disruptionRun.levelcapTimeDurationString
-
+                        timeToDisplayOnOverlay_ExpectedOrEnd = self.disruptionRun.levelcapTimeDurationString
+                        
                         self.appUI.expectedEndTimeStringDisplay.configure(text = StringConstants.levelCapTimeString)
                         self.appUI.expectedEndTimeDisplay.configure(text = self.disruptionRun.levelcapTimeDurationString)
 
@@ -826,6 +833,8 @@ class FullParser:
                     clientDataToSend.totalRoundTimeInSeconds = self.disruptionCurrentRound.totalRoundTimeInSecondsString
                     clientDataToSend.currentAvg = averageRealTimeValue
                     clientDataToSend.bestRound = self.disruptionRun.bestRunTimeString + " (r" + str(len(self.disruptionRun.rounds)) + ")"
+                    
+                    self.overlayWindow.displayDisruptionRoundData(self.disruptionCurrentRound.totalRoundTimeInSecondsString, timeToDisplayOnOverlay_ExpectedOrEnd)
                     
                     JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
                     self.connection.publishMessage(JSONData)

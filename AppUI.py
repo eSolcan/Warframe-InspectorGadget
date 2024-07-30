@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from staticStrings import StringConstants
 import pyperclip
-import time
+import InspectorAppOverlayUI
 
 # Get absolute path to resource, used for images so that they can be added to .exe
 def resource_path(relative_path):
@@ -52,11 +52,13 @@ class AppUI:
     columnRelValuesDisruption = [0.30, 0.42, 0.54, 0.66, 0.78, 0.88]
     lineRelValuesDisruption = [0.20, 0.32, 0.53, 0.65, 0.80]
 
-    def __init__(self, fullClass, app) -> None:
+    def __init__(self, fullClass, app, overlayWindow) -> None:
         
         self.fullParser = fullClass
 
         self.app = app
+        self.overlayWindow = overlayWindow
+        self.overlayFontSize = 12
 
         self.kappaRegBadList = [StringConstants.kappa3, StringConstants.kappa4, StringConstants.kappa6]
         self.apolloRegBadList = [StringConstants.apollo6]
@@ -116,6 +118,19 @@ class AppUI:
                                                    )
         self.alwaysOnTopCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[2], anchor = "w")
 
+        # Parse from file start checkbox
+        self.parseFromStartCheckBoxValue = customtkinter.StringVar(value = "off")
+
+        self.parseFromStartCheckBox = customtkinter.CTkCheckBox(self.settingsWindow, 
+                                                   text = "Parse full log\n(for finished runs)", 
+                                                   command = self.parseFromStartCheckBox_event, 
+                                                   variable = self.parseFromStartCheckBoxValue, 
+                                                   onvalue = "on", 
+                                                   offvalue = "off", 
+                                                   font = ("Arial", 14)
+                                                   )
+        self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
+
         # Host/client network code connection related things
         self.hostCodeStringDisplay = customtkinter.CTkLabel(self.settingsWindow, text = StringConstants.hostCodeDisplayString, text_color = self.textColor, font = ("Arial", 18))
         self.hostCodeStringDisplay.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[4], anchor = "w")
@@ -155,22 +170,38 @@ class AppUI:
         )
         self.hostCodeInputBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[6] - .06, anchor = "w")
         
-
-        # Parse from file start checkbox
-        self.parseFromStartCheckBoxValue = customtkinter.StringVar(value = "off")
-
-        self.parseFromStartCheckBox = customtkinter.CTkCheckBox(self.settingsWindow, 
-                                                   text = "Parse full log\n(for finished runs)", 
-                                                   command = self.parseFromStartCheckBox_event, 
-                                                   variable = self.parseFromStartCheckBoxValue, 
-                                                   onvalue = "on", 
-                                                   offvalue = "off", 
-                                                   font = ("Arial", 14)
-                                                   )
-        self.parseFromStartCheckBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[3], anchor = "w")
+        # Overlay related settings
+        self.overlayStringDisplay = customtkinter.CTkLabel(self.settingsWindow, text = "Overlay related", text_color = self.textColor, font = ("Arial", 18))
+        self.overlayStringDisplay.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[7] - .06, anchor = "w")
+        
+        self.fontSizeStringDisplay = customtkinter.CTkLabel(self.settingsWindow, text = "Font size", text_color = self.textColor, font = ("Arial", 14))
+        self.fontSizeStringDisplay.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[8] - .095, anchor = "w")
+        
+        self.fontSizeInputBox = customtkinter.CTkTextbox(
+            self.settingsWindow, 
+            width = 60, 
+            height = 20, 
+            corner_radius = 4,
+            border_width = 1,
+            activate_scrollbars = False,
+            wrap = "none"
+        )
+        self.fontSizeInputBox.place(relx = self.columnRelValues[1] + .01, rely = self.lineRelValues[8] - .095, anchor = "w")
+        
+        self.fontSizeInputBox.bind('<<Modified>>', self.tempShit)
+        
+        self.toggleOverlayButtton = customtkinter.CTkButton(
+            self.settingsWindow,
+            text = StringConstants.openOverlayString,
+            font = ("Arial", 14, "bold"),
+            width = 120,
+            height = 30,
+            command = self.toggleOverlayFunction
+        )
+        self.toggleOverlayButtton.place(relx = self.columnRelValues[2] - .015, rely = self.lineRelValues[8] - .095, anchor = "w")
 
         # Update available window bottom left
-        self.updateAvailableWindow = customtkinter.CTkFrame(self.settingsWindow, width = 260, height = 140, fg_color="#404040")
+        self.updateAvailableWindow = customtkinter.CTkFrame(self.settingsWindow, width = 260, height = 70, fg_color="#404040")
         self.updateAvailableWindow.pack_propagate(0)
         
         self.updatedVersionAvailableText = customtkinter.CTkLabel(self.updateAvailableWindow, text = StringConstants.updateAvailableString, text_color = self.textColorRed, font = ("Arial", 28, "bold"))
@@ -179,9 +210,9 @@ class AppUI:
         self.updatedVersionAvailableHyperlink = customtkinter.CTkLabel(self.updateAvailableWindow, 
                                                                        text = StringConstants.updateAvailableHyperlinkString, 
                                                                        text_color = self.textColorHyperlink, 
-                                                                       font = ("Arial", 32, "bold"),
+                                                                       font = ("Arial", 18, "bold"),
                                                                        cursor = "hand2")
-        self.updatedVersionAvailableHyperlink.place(relx = .5, rely = .63, anchor = "center") 
+        self.updatedVersionAvailableHyperlink.place(relx = .5, rely = .7, anchor = "center") 
         self.updatedVersionAvailableHyperlink.bind("<Button-1>", lambda e:openInBrowser(StringConstants.updateUrl))
         
 
@@ -443,16 +474,6 @@ class AppUI:
             self.app.attributes('-topmost', True)
         else:
             self.app.attributes('-topmost', False)
-
-    # Function that manages the toxin playing sound checkbox value
-    def playToxinSoundCheckBox_event(self):
-        if self.fullParser.loggingState:
-            logging.info("Changed status of Toxin Sound " + self.playToxinSoundCheckBoxValue.get())
-
-        if self.playToxinSoundCheckBoxValue.get() == "on":
-            self.fullParser.playToxinSound = True
-        else:
-            self.fullParser.playToxinSound = False
             
     # Function that manages Parse From Start value
     def parseFromStartCheckBox_event(self):
@@ -751,8 +772,10 @@ class AppUI:
             self.fullParser.connectedToHostBool = True
             self.fullParser.restartReadingBool = True
             self.connectToHostButton.configure(text = "Done", fg_color = self.buttonGreenColor, hover_color = self.buttonGreenColorHover)
-            
-            
+                        
+            # self.fullParser.connection.mqttClient.userdata = self.fullParser.selfWarframeUsername
+            # print(self.fullParser.connection.mqttClient.userdata)
+            # print(self.fullParser.selfWarframeUsername)
             self.fullParser.connection.stopConnection()
             
             self.app.after(self.fullParser.sleepBetweenCalls + 100, self.resetAnalyzerUI)
@@ -767,6 +790,8 @@ class AppUI:
         
     # Used to revert back to copy host code on the button
     def revertConnectToHostButtonText(self, codeToConnect):
+        self.innerWindowBox.set("Analyzer")
+        
         self.fullParser.connection.mqttTopic = codeToConnect
         self.fullParser.connection.startConnection()
         
@@ -796,4 +821,36 @@ class AppUI:
         self.currentAverageDisplay.configure(text = dataFromHost["currentAvg"])
         self.bestRoundTimeDisplay.configure(text = dataFromHost["bestRound"])
         self.expectedEndTimeDisplay.configure(text = dataFromHost["expectedEnd"])
-        
+           
+    # Toggle overlay button function
+    def toggleOverlayFunction(self):
+        if(self.fullParser.overlayWindow == None):
+            self.fullParser.overlayWindow = InspectorAppOverlayUI.InspectorAppOverlayUI(self.fullParser, self.overlayFontSize)
+            self.toggleOverlayButtton.configure(text = StringConstants.closeOverlayString)
+        else:
+            self.fullParser.overlayWindow.overlayWindow.destroy()
+            self.fullParser.overlayWindow = None
+            self.toggleOverlayButtton.configure(text = StringConstants.openOverlayString)
+            
+    def tempShit(self, event):
+        newFontSize = None
+        cleanedText = self.fontSizeInputBox.get('1.0', "end-1c").replace(" ", "")
+        try:
+            newFontSize = int(cleanedText)
+            if(newFontSize > 40):
+                self.overlayFontSize = 40
+                self.fontSizeInputBox.delete('0.0', 'end')
+                self.fontSizeInputBox.insert('end', "")
+            elif(newFontSize <= 6):
+                self.overlayFontSize = 6
+            else:
+                self.overlayFontSize = newFontSize
+        except:
+            self.fontSizeInputBox.delete('0.0', 'end')
+            self.fontSizeInputBox.insert('end', "")
+            
+        if(self.fullParser.overlayWindow != None):
+            self.fullParser.overlayWindow.updateThingsBasedOnNewFontSize(self.overlayFontSize)
+            
+        # Force edit modified back to default false, otherwise new edit detections don't get caught
+        self.fontSizeInputBox.edit_modified(False)

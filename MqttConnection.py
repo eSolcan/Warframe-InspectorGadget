@@ -19,7 +19,7 @@ class MqttConnection:
 
 
     def startConnection(self):
-        self.mqttClient.connect(self.mqttBroker, 1883, 60)
+        self.mqttClient.connect(self.mqttBroker, 1883, 180)
         self.mqttClient.loop_start()
         
     def stopConnection(self):
@@ -44,7 +44,7 @@ class MqttConnection:
     # All logic done here and sent to UI/main parser
     # receivedDataJson["varId"] to access things
     def onMessage(self, client, userdata, msg):
-        
+                
         if(self.fullParser.connectedToHostBool):
         
             receivedDataJson = json.loads(msg.payload)
@@ -56,22 +56,24 @@ class MqttConnection:
                 self.appUi.displayMissionAndTiles(receivedDataJson["missionName"], receivedDataJson["tiles"], receivedDataJson["goodTilesBoolean"])
             elif(receivedDataJson["totalRoundTimeInSeconds"] != ""):
                 self.appUi.displayDisruptionRoundFromHostData(receivedDataJson)
+                if(self.fullParser.overlayWindow != None):
+                    self.fullParser.overlayWindow.displayDisruptionRoundData(receivedDataJson["totalRoundTimeInSeconds"], receivedDataJson["expectedEnd"])
             
         
         
         
-# Class to be sent over network to connected clients
-class DataForClients:
-    def __init__(self) -> None:
-        self.keyInsertTimes = []
-        self.demoKillTimes = []
+# Class to be sent over network to connected clients - TEMP, only here so I can see variables
+# class DataForClients:
+#     def __init__(self) -> None:
+#         self.keyInsertTimes = []
+#         self.demoKillTimes = []
         
-        self.totalRoundTimeInSeconds = ""
-        self.currentAvg = ""
-        self.bestRound = ""
-        self.expectedEnd = ""
+#         self.totalRoundTimeInSeconds = ""
+#         self.currentAvg = ""
+#         self.bestRound = ""
+#         self.expectedEnd = ""
         
-        self.missionName = ""
-        self.tiles = ""
-        self.goodTilesBoolean = None
-        self.resetToOrbiterBoolean = None
+#         self.missionName = ""
+#         self.tiles = ""
+#         self.goodTilesBoolean = None
+#         self.resetToOrbiterBoolean = None

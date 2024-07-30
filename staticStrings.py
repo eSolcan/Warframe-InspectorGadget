@@ -5,10 +5,15 @@ class StringConstants:
     
     newLineString = "\n"
 
+    loggedInString = "Logged in "
+
     updateAvailableString = "Update available"
     updateAvailableHyperlinkString = "Download"
     
     hostCodeDisplayString = "Host code/Connect to"
+    
+    openOverlayString = "Open Overlay"
+    closeOverlayString = "Close Overlay"
 
     # Orbiter reset string
     orbiterResetString = "/Lotus/Levels/Proc/PlayerShip generating layout with segments"
@@ -49,6 +54,10 @@ class StringConstants:
     kappa8 = "Eight"
     kappaList = [kappa1, kappa3, kappa4, kappa6, kappa7, kappa8]
     kappaListForCheckbox = ["1", "3", "4", "6", "7", "8"]
+    
+    overlayRoundString = "Round - "
+    overlaySpaceString = "     "
+    overlayExpectedString = "Expected - "
 
     # Apollo strings
     apolloMoonIntString = "Layer /Lotus/Levels/OrokinMoon/MoonInt"

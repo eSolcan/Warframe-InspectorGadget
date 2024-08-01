@@ -20,7 +20,7 @@ class MqttConnection:
 
 
     def startConnection(self):
-        self.mqttClient.connect(self.mqttBroker, 1883, 180)
+        self.mqttClient.connect(self.mqttBroker, 1883, 30)
         self.mqttClient.loop_start()
         
     def stopConnection(self):
@@ -60,25 +60,18 @@ class MqttConnection:
                 if(self.fullParser.overlayWindow != None):
                     self.fullParser.overlayWindow.updateOverlayWithTextRaw(receivedDataJson["tiles"])
             elif(receivedDataJson["totalRoundTimeInSeconds"] != ""):
+                if(not self.appUi.displayInKappaMode):
+                    self.fullParser.app.after(50, self.appUi.updateUIForDisruptionLogging)
+                
                 self.appUi.displayDisruptionRoundFromHostData(receivedDataJson)
                 if(self.fullParser.overlayWindow != None):
-                    self.fullParser.overlayWindow.displayDisruptionRoundData(receivedDataJson["totalRoundTimeInSeconds"], receivedDataJson["expectedEnd"])
+                    if(receivedDataJson["isLastKappaRoun"]):
+                        self.fullParser.overlayWindow.updateOverlayWithTextRaw(StringConstants.overlayRoundString + 
+                                                                          receivedDataJson["totalRoundTimeInSeconds"] + 
+                                                                          StringConstants.overlaySpaceString + 
+                                                                          StringConstants.overlayEndTimeString + 
+                                                                          receivedDataJson["expectedEnd"])
+                    else:
+                        self.fullParser.overlayWindow.displayDisruptionRoundData(receivedDataJson["totalRoundTimeInSeconds"], receivedDataJson["expectedEnd"])
             
         
-        
-        
-# Class to be sent over network to connected clients - TEMP, only here so I can see variables
-# class DataForClients:
-#     def __init__(self) -> None:
-#         self.keyInsertTimes = []
-#         self.demoKillTimes = []
-        
-#         self.totalRoundTimeInSeconds = ""
-#         self.currentAvg = ""
-#         self.bestRound = ""
-#         self.expectedEnd = ""
-        
-#         self.missionName = ""
-#         self.tiles = ""
-#         self.goodTilesBoolean = None
-#         self.resetToOrbiterBoolean = None

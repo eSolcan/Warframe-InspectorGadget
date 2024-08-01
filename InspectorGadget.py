@@ -77,7 +77,9 @@ class FullParser:
 
         # App window - Size, Title, icon and always on top setting
         self.app = customtkinter.CTk()
-        self.app.geometry("960x512")
+        # self.app.geometry("960x512")
+        self.app.geometry("%dx%d+%d+%d" % (960, 512, 1920/4, 1080/4))
+        
         self.app.title("InspectorGadget")
         self.app.iconbitmap(appLogo)
         self.app.attributes('-topmost', True)    
@@ -494,26 +496,48 @@ class FullParser:
                     sumOfTiles = ""
                     
                     self.missionLoadEndReached = True
+                    tilesString = ""
                     
+                    tilesIndex = 0
                     for x in self.cascadeTilesFound:
+                        newTileString = ""
+                        
                         # Check if layout has 5
                         if x == StringConstants.cascadeShuttleBay: 
                             sumOfTiles = sumOfTiles + "5"
+                            newTileString = StringConstants.cascadeShuttleBayDisplay
                         
                         # Check if layout has 4
-                        elif x in StringConstants.cascadeListOf4:
-                            sumOfTiles = sumOfTiles + "4"
-                    
-                        # Check if layout has 3
-                        elif x in StringConstants.cascadeListOf3:
-                            sumOfTiles = sumOfTiles + "3"
+                        i = 0
+                        for y in StringConstants.cascadeListOf4:
+                            if(y == x):
+                                sumOfTiles = sumOfTiles + "4"
+                                newTileString = StringConstants.cascadeListOf4Display[i]
+                                break
+    
+                            i += 1
+                            
+                        i = 0
+                        for y in StringConstants.cascadeListOf3:
+                            if(y == x):
+                                sumOfTiles = sumOfTiles + "3"
+                                newTileString = StringConstants.cascadeListOf3Display[i]
+                                break
+    
+                            i += 1
+                            
+                        if(tilesIndex < 2):
+                            tilesString = tilesString + newTileString + " - "
+                        else:
+                            tilesString = tilesString + newTileString
+                            
+                        tilesIndex += 1
                             
                     if len(sumOfTiles) == 3 and "5" in sumOfTiles:
                         self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
-                        self.appUI.foundTileDisplay.configure(text = sumOfTiles, text_color = self.appUI.textColorGreen)
-    
+                        self.appUI.foundTileDisplay.configure(text = sumOfTiles + "\n" + tilesString, text_color = self.appUI.textColorGreen)
                     else:
-                        self.appUI.foundTileDisplay.configure(text = sumOfTiles + " - Reset", text_color = self.appUI.textColorRed)
+                        self.appUI.foundTileDisplay.configure(text = sumOfTiles + " - Reset\n" + tilesString, text_color = self.appUI.textColorRed)
 
                     if self.loggingState:
                         for x in self.cascadeTilesFound:
@@ -819,6 +843,7 @@ class FullParser:
                             self.disruptionRun.levelcapTimeDurationString = str(datetime.timedelta(seconds = self.disruptionRun.levelcapTimeDurationSeconds))[0:11]
 
                         clientDataToSend.expectedEnd = self.disruptionRun.levelcapTimeDurationString
+                        clientDataToSend.isLastKappaRound = True
                         timeToDisplayOnOverlay_ExpectedOrEnd = self.disruptionRun.levelcapTimeDurationString
                         
                         self.appUI.expectedEndTimeStringDisplay.configure(text = StringConstants.levelCapTimeString)
@@ -840,7 +865,14 @@ class FullParser:
                     clientDataToSend.bestRound = self.disruptionRun.bestRunTimeString + " (r" + str(len(self.disruptionRun.rounds)) + ")"
                     
                     if(self.overlayWindow != None):
-                        self.overlayWindow.displayDisruptionRoundData(self.disruptionCurrentRound.totalRoundTimeInSecondsString, timeToDisplayOnOverlay_ExpectedOrEnd)
+                        if len(self.disruptionRun.rounds) == 45:
+                            self.overlayWindow.updateOverlayWithTextRaw(StringConstants.overlayRoundString + 
+                                                                          self.disruptionCurrentRound.totalRoundTimeInSecondsString + 
+                                                                          StringConstants.overlaySpaceString + 
+                                                                          StringConstants.overlayEndTimeString + 
+                                                                          timeToDisplayOnOverlay_ExpectedOrEnd)
+                        else:
+                            self.overlayWindow.displayDisruptionRoundData(self.disruptionCurrentRound.totalRoundTimeInSecondsString, timeToDisplayOnOverlay_ExpectedOrEnd)
                     
                     JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
                     self.connection.publishMessage(JSONData)
@@ -969,6 +1001,8 @@ class DataForClients:
         self.tiles = ""
         self.goodTilesBoolean = False
         self.resetToOrbiterBoolean = False
+        
+        self.isLastKappaRound = False
         
 
 

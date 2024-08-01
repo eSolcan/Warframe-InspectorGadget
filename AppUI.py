@@ -51,6 +51,8 @@ class AppUI:
 
     columnRelValuesDisruption = [0.30, 0.42, 0.54, 0.66, 0.78, 0.88]
     lineRelValuesDisruption = [0.20, 0.32, 0.53, 0.65, 0.80]
+    
+    displayInKappaMode = False
 
     def __init__(self, fullClass, app, overlayWindow) -> None:
         
@@ -188,9 +190,9 @@ class AppUI:
         )
         self.fontSizeInputBox.place(relx = self.columnRelValues[1] + .01, rely = self.lineRelValues[8] - .095, anchor = "w")
         
-        self.fontSizeInputBox.bind('<<Modified>>', self.tempShit)
+        self.fontSizeInputBox.bind('<<Modified>>', self.updateOverlayFontFunction)
         
-        self.toggleOverlayButtton = customtkinter.CTkButton(
+        self.toggleOverlayButton = customtkinter.CTkButton(
             self.settingsWindow,
             text = StringConstants.openOverlayString,
             font = ("Arial", 14, "bold"),
@@ -198,7 +200,7 @@ class AppUI:
             height = 30,
             command = self.toggleOverlayFunction
         )
-        self.toggleOverlayButtton.place(relx = self.columnRelValues[2] - .015, rely = self.lineRelValues[8] - .095, anchor = "w")
+        self.toggleOverlayButton.place(relx = self.columnRelValues[2] - .015, rely = self.lineRelValues[8] - .095, anchor = "w")
 
         # Update available window bottom left
         self.updateAvailableWindow = customtkinter.CTkFrame(self.settingsWindow, width = 260, height = 70, fg_color="#404040")
@@ -587,6 +589,8 @@ class AppUI:
         if self.fullParser.loggingState:
             logging.info("In resetAnalyzerUI()")
 
+        self.displayInKappaMode = False
+
         # Update values
         self.parseFromStartCheckBox.deselect()
 
@@ -645,6 +649,8 @@ class AppUI:
     def updateUIForDisruptionLogging(self):
         if self.fullParser.loggingState:
             logging.info("In updateUIForDisruptionLogging()")
+
+        self.displayInKappaMode = True
 
         # Remove old un-needed elements    
         self.missionNameDisplay.place_forget()
@@ -779,6 +785,7 @@ class AppUI:
             self.fullParser.connection.stopConnection()
             
             self.app.after(self.fullParser.sleepBetweenCalls + 100, self.resetAnalyzerUI)
+            self.app.after(1500, self.connectToHostActual, codeToConnect)
             
         else:
             self.connectToHostButton.configure(text = "Buh", fg_color = self.buttonRedColor, hover_color = self.buttonRedColorHover)
@@ -786,17 +793,19 @@ class AppUI:
         self.hostCodeInputBox.delete('0.0', 'end')
         self.hostCodeInputBox.insert('end', "")
         
-        self.app.after(1500, self.revertConnectToHostButtonText, codeToConnect)
+        self.app.after(1000, self.revertConnectToHostButtonText)
         
     # Used to revert back to copy host code on the button
-    def revertConnectToHostButtonText(self, codeToConnect):
+    def revertConnectToHostButtonText(self):        
+        self.fullParser.restartReadingBool = False
+        self.connectToHostButton.configure(text = "Connect", fg_color = self.buttonBlueColor, hover_color = self.buttonBlueColorHover)
+    
+    # Used to revert back to copy host code on the button
+    def connectToHostActual(self, codeToConnect):
         self.innerWindowBox.set("Analyzer")
         
         self.fullParser.connection.mqttTopic = codeToConnect
         self.fullParser.connection.startConnection()
-        
-        self.fullParser.restartReadingBool = False
-        self.connectToHostButton.configure(text = "Connect", fg_color = self.buttonBlueColor, hover_color = self.buttonBlueColorHover)
     
     def displayMissionAndTiles(self, missionName, tiles, goodTilesBoolean):
         text_colorNew = ""
@@ -826,13 +835,13 @@ class AppUI:
     def toggleOverlayFunction(self):
         if(self.fullParser.overlayWindow == None):
             self.fullParser.overlayWindow = InspectorAppOverlayUI.InspectorAppOverlayUI(self.fullParser, self.overlayFontSize)
-            self.toggleOverlayButtton.configure(text = StringConstants.closeOverlayString)
+            self.toggleOverlayButton.configure(text = StringConstants.closeOverlayString)
         else:
             self.fullParser.overlayWindow.overlayWindow.destroy()
             self.fullParser.overlayWindow = None
-            self.toggleOverlayButtton.configure(text = StringConstants.openOverlayString)
+            self.toggleOverlayButton.configure(text = StringConstants.openOverlayString)
             
-    def tempShit(self, event):
+    def updateOverlayFontFunction(self, event):
         newFontSize = None
         cleanedText = self.fontSizeInputBox.get('1.0', "end-1c").replace(" ", "")
         try:

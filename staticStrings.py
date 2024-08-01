@@ -59,6 +59,7 @@ class StringConstants:
     overlayRoundString = "Round - "
     overlaySpaceString = "     "
     overlayExpectedString = "Expected - "
+    overlayEndTimeString = "End Time - "
 
     # Apollo strings
     apolloMoonIntString = "Layer /Lotus/Levels/OrokinMoon/MoonInt"
@@ -93,11 +94,18 @@ class StringConstants:
     # 5 - MUST ALWAYS BE THERE
     cascadeShuttleBay = "ShuttleBay"
     
+    cascadeShuttleBayDisplay = "Hangar"
+    
     # 4 - x2
     cascadePark = "Park"
     cascadeParkB = "ParkB"
     cascadeParkC = "ParkC"
     cascadeSchool = "School"
+    
+    cascadeParkDisplay = "Park"
+    cascadeParkBDisplay = "Serenity"
+    cascadeParkCDisplay = "Roost"
+    cascadeSchoolDisplay = "Schoolyard"
     
     # 3 - passable
     cascadeCellBlockA = "CellBlockA"
@@ -107,9 +115,22 @@ class StringConstants:
     cascadeIndoctrinationHall = "IndoctrinationHall"
     cascadeAmphitheatre = "Amphitheatre"
     cascadeLunaroCourt = "LunaroCourt"
+    
+    cascadeCellBlockADisplay = "Brig"
+    cascadeHydroponicsDisplay = "Garden"
+    cascadeCargoBayDisplay = "Cargo"
+    cascadeLivingQuartersDisplay = "Habitat"
+    cascadeIndoctrinationHallDisplay = "Hall"
+    cascadeAmphitheatreDisplay = "Theatre"
+    cascadeLunaroCourtDisplay = "Lunaro"
+    
     cascadeListOf4 = [cascadePark, cascadeParkB, cascadeParkC, cascadeSchool]
     cascadeListOf3 = [cascadeCellBlockA, cascadeHydroponics, cascadeCargoBay, cascadeLivingQuarters, cascadeIndoctrinationHall, cascadeAmphitheatre, cascadeLunaroCourt]
+    
+    cascadeListOf4Display = [cascadeParkDisplay, cascadeParkBDisplay, cascadeParkCDisplay, cascadeSchoolDisplay]
+    cascadeListOf3Display = [cascadeCellBlockADisplay, cascadeHydroponicsDisplay, cascadeCargoBayDisplay, cascadeLivingQuartersDisplay, cascadeIndoctrinationHallDisplay, cascadeAmphitheatreDisplay, cascadeLunaroCourtDisplay]
 
+    # Dent
     apolloSpeed = "Speed"
 
     # End of mission load strings

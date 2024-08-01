@@ -1,3 +1,5 @@
+import os
+import sys
 from tkinter import *
 import tkinter as tk
 import win32gui
@@ -5,6 +7,15 @@ import win32con
 from PIL import Image
 import customtkinter
 from staticStrings import StringConstants
+
+def resource_pathAnnoying(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class InspectorAppOverlayUI:
     
@@ -15,12 +26,16 @@ class InspectorAppOverlayUI:
     overlayWidth = 880 
     overlayHeight = 220 
     
+    overlayPositionX = -326
+    overlayPositionY = -92
+    
     def __init__(self, parser, overlayFontSize) -> None:
         self.fullParser = parser
         
         self.overlayFontSize = overlayFontSize
         
         self.overlayWindow = Toplevel()
+        # self.overlayWindow.geometry("%dx%d+%d+%d" % (self.overlayWidth, self.overlayHeight, self.overlayPositionX, self.overlayPositionY))
         self.overlayWindow.geometry('%dx%d' % (self.overlayWidth, self.overlayHeight))
         self.overlayWindow.overrideredirect(True)
         self.overlayWindow.config(bg='#00FF00')
@@ -41,8 +56,9 @@ class InspectorAppOverlayUI:
                         )
         self.overlayLabel.place(relx = .5, rely = .5, anchor = "center")
 
-        lockImage = customtkinter.CTkImage(light_image = Image.open("lock_white.png"),
-                                        dark_image = Image.open("lock_white.png"),
+        imageLockRaw = Image.open(resource_pathAnnoying("lock_white.png"))
+        lockImage = customtkinter.CTkImage(light_image = imageLockRaw,
+                                        dark_image = imageLockRaw,
                                         size = (40, 40)
                                         )
 
@@ -77,7 +93,7 @@ class InspectorAppOverlayUI:
             
     # Turns a tkinter element into "transparent", allowing click through
     def setClickthrough(self, hwnd):
-        print("setting window properties")
+        # print("setting window properties")
         try:
             styles = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
             styles = win32con.WS_EX_LAYERED | win32con.WS_EX_TRANSPARENT

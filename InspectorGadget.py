@@ -33,7 +33,7 @@ def resource_pathAnnoying(relative_path):
 
 class FullParser:
     def __init__(self) -> None:
-        self.currentVersion = "1.3.7"
+        self.currentVersion = "1.4.0"
 
         self.currentMissionTileString = None
         self.badTileList = None

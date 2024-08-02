@@ -65,7 +65,7 @@ class MqttConnection:
                 
                 self.appUi.displayDisruptionRoundFromHostData(receivedDataJson)
                 if(self.fullParser.overlayWindow != None):
-                    if(receivedDataJson["isLastKappaRoun"]):
+                    if(receivedDataJson["isLastKappaRound"]):
                         self.fullParser.overlayWindow.updateOverlayWithTextRaw(StringConstants.overlayRoundString + 
                                                                           receivedDataJson["totalRoundTimeInSeconds"] + 
                                                                           StringConstants.overlaySpaceString + 

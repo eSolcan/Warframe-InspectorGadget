@@ -173,7 +173,7 @@ class AppUI:
         self.hostCodeInputBox.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[6] - .06, anchor = "w")
         
         # Overlay related settings
-        self.overlayStringDisplay = customtkinter.CTkLabel(self.settingsWindow, text = "Overlay related", text_color = self.textColor, font = ("Arial", 18))
+        self.overlayStringDisplay = customtkinter.CTkLabel(self.settingsWindow, text = "Overlay (Disruption)", text_color = self.textColor, font = ("Arial", 18))
         self.overlayStringDisplay.place(relx = self.columnRelValues[0] + .025, rely = self.lineRelValues[7] - .06, anchor = "w")
         
         self.fontSizeStringDisplay = customtkinter.CTkLabel(self.settingsWindow, text = "Font size", text_color = self.textColor, font = ("Arial", 14))
@@ -189,6 +189,7 @@ class AppUI:
             wrap = "none"
         )
         self.fontSizeInputBox.place(relx = self.columnRelValues[1] + .01, rely = self.lineRelValues[8] - .095, anchor = "w")
+        self.fontSizeInputBox.insert('end', self.overlayFontSize)
         
         self.fontSizeInputBox.bind('<<Modified>>', self.updateOverlayFontFunction)
         

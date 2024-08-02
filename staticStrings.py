@@ -10,7 +10,7 @@ class StringConstants:
     updateAvailableString = "Update available"
     updateAvailableHyperlinkString = "Download"
     
-    hostCodeDisplayString = "Host code/Connect to"
+    hostCodeDisplayString = "Host/Client Connect (Disruption)"
     
     openOverlayString = "Open Overlay"
     closeOverlayString = "Close Overlay"

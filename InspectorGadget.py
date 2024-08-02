@@ -104,7 +104,7 @@ class FullParser:
         
         # Randomly generated string for clients to connect to
         self.hostCodeLength = 14
-        self.hostCodeString = "kappa_" + ''.join(random.choices(string.ascii_letters + string.digits, k = self.hostCodeLength))
+        self.hostCodeString = "dsrpt_" + ''.join(random.choices(string.ascii_letters + string.digits, k = self.hostCodeLength))
         self.appUI.hostCodeActualDisplay.configure(text = self.hostCodeString)
         
         self.selfWarframeUsername = ""

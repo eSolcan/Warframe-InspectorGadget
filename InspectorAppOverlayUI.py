@@ -29,14 +29,15 @@ class InspectorAppOverlayUI:
     overlayPositionX = -326
     overlayPositionY = -92
     
-    def __init__(self, parser, overlayFontSize) -> None:
+    def __init__(self, parser, overlayFontSize, fontName, posX, posY) -> None:
         self.fullParser = parser
         
         self.overlayFontSize = overlayFontSize
+        self.fontName = fontName
         
         self.overlayWindow = Toplevel()
-        # self.overlayWindow.geometry("%dx%d+%d+%d" % (self.overlayWidth, self.overlayHeight, self.overlayPositionX, self.overlayPositionY))
-        self.overlayWindow.geometry('%dx%d' % (self.overlayWidth, self.overlayHeight))
+        self.overlayWindow.geometry("%dx%d+%d+%d" % (self.overlayWidth, self.overlayHeight, posX, posY))
+
         self.overlayWindow.overrideredirect(True)
         self.overlayWindow.config(bg='#00FF00')
         self.overlayWindow.attributes("-alpha", 1)
@@ -49,7 +50,7 @@ class InspectorAppOverlayUI:
                         text = StringConstants.overlayRoundString + "0:00" + StringConstants.overlaySpaceString + StringConstants.overlayExpectedString + "??:??", 
                         bg = "black", 
                         fg = "white", 
-                        font = ("Arial", self.overlayFontSize), 
+                        font = (self.fontName, self.overlayFontSize), 
                         bd = 0, 
                         padx = 18, 
                         pady = 10
@@ -81,6 +82,13 @@ class InspectorAppOverlayUI:
         self.overlay_y_pos = event.y
 
     def overlay_stop_move(self, event):
+        # Update overlay position in config file
+        self.fullParser.updateConfigFile("Overlay", "overlayposx", str(self.overlayWindow.winfo_x()))
+        self.fullParser.updateConfigFile("Overlay", "overlayposy", str(self.overlayWindow.winfo_y()))
+        
+        self.fullParser.appUI.overlayPositionX = self.overlayWindow.winfo_x()
+        self.fullParser.appUI.overlayPositionY = self.overlayWindow.winfo_y()
+        
         self.overlay_x_pos = None
         self.overlay_y_pos = None
 
@@ -129,6 +137,6 @@ class InspectorAppOverlayUI:
     def updateThingsBasedOnNewFontSize(self, newFontSize):
         self.overlayFontSize = newFontSize
                     
-        self.overlayLabel.configure(font = ("Arial", self.overlayFontSize))
+        self.overlayLabel.configure(font = (self.fontName, self.overlayFontSize))
         
       

@@ -19,6 +19,7 @@ from playsound import playsound
 import requests
 import MqttConnection
 import random
+import configparser
 
 requestVersionContent = requests.get(StringConstants.versionUrl)
 
@@ -54,6 +55,13 @@ class FullParser:
         self.fileRollbackPositionSmall = None
         self.restartReadingBool = False
         self.playToxinSound = True
+        
+        # Settings/Config/DB file
+        self.configFileName = 'config.ini'
+        self.configSettings = configparser.ConfigParser()
+        
+        # Read config file
+        self.configSettings.read(self.configFileName)
 
         # Time to sleep between each parsing progression, in millis
         self.sleepBetweenCalls = 1000
@@ -77,17 +85,23 @@ class FullParser:
 
         # App window - Size, Title, icon and always on top setting
         self.app = customtkinter.CTk()
-        # self.app.geometry("960x512")
         self.app.geometry("%dx%d+%d+%d" % (960, 512, 1920/4, 1080/4))
         
         self.app.title("InspectorGadget")
         self.app.iconbitmap(appLogo)
-        self.app.attributes('-topmost', True)    
+        # self.app.attributes('-topmost', True)    
         
         self.overlayWindow = None
 
         # Class that manages all UI elements
-        self.appUI = AppUI(self, self.app, self.overlayWindow)
+        self.appUI = AppUI(self, 
+                           self.app, 
+                           self.overlayWindow,
+                           self.configSettings.getint("Overlay", "overlayfontsize"), 
+                           self.configSettings.get("Overlay", "overlayfontname"), 
+                           self.configSettings.getint("Overlay", "overlayposx"), 
+                           self.configSettings.getint("Overlay", "overlayposy")
+                           )
         
         # Misc variables
         self.currentRoundShown = -1
@@ -115,16 +129,14 @@ class FullParser:
         self.connection = MqttConnection.MqttConnection(self, self.appUI, self.hostCodeString)
         self.connection.startConnection()
         
-    # def setClickthrough(self, hwnd):
-    #     print("setting window properties")
-    #     try:
-    #         styles = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
-    #         styles = win32con.WS_EX_LAYERED | win32con.WS_EX_TRANSPARENT
-    #         win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE, styles)
-    #         win32gui.SetLayeredWindowAttributes(hwnd, 0, 255, win32con.LWA_ALPHA)
-    #     except Exception as e:
-    #         print(e)
+    def updateConfigFile(self, section, param, newValue):
+        self.configSettings.set(section, param, newValue)
+        
+        # Write the configuration to a file
+        with open(self.configFileName, 'w') as configfile:
+            self.configSettings.write(configfile)
             
+        configfile.close()            
         
     # Open url in web browser
     def openInBrowser(url):

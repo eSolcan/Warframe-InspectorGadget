@@ -54,13 +54,19 @@ class AppUI:
     
     displayInKappaMode = False
 
-    def __init__(self, fullClass, app, overlayWindow) -> None:
+    def __init__(self, fullClass, app, overlayWindow, fontSize, fontName, posX, posY) -> None:
         
         self.fullParser = fullClass
 
         self.app = app
         self.overlayWindow = overlayWindow
-        self.overlayFontSize = 12
+        self.overlayFontSize = fontSize
+        try:
+            self.overlayFontName = fontName
+        except:
+            self.overlayFontName = "Arial"
+        self.overlayPositionX = posX
+        self.overlayPositionY = posY
 
         self.kappaRegBadList = [StringConstants.kappa3, StringConstants.kappa4, StringConstants.kappa6]
         self.apolloRegBadList = [StringConstants.apollo6]
@@ -108,7 +114,7 @@ class AppUI:
         self.generalSettingsDisplay.place(relx = self.columnRelValues[1], rely = self.lineRelValues[1], anchor = "center")
 
         # Always on top checkbox
-        self.alwaysOnTopCheckBoxValue = customtkinter.StringVar(value = "on")
+        self.alwaysOnTopCheckBoxValue = customtkinter.StringVar(value = "off")
 
         self.alwaysOnTopCheckBox = customtkinter.CTkCheckBox(self.settingsWindow, 
                                                    text = "Always on top", 
@@ -835,7 +841,12 @@ class AppUI:
     # Toggle overlay button function
     def toggleOverlayFunction(self):
         if(self.fullParser.overlayWindow == None):
-            self.fullParser.overlayWindow = InspectorAppOverlayUI.InspectorAppOverlayUI(self.fullParser, self.overlayFontSize)
+            self.fullParser.overlayWindow = InspectorAppOverlayUI.InspectorAppOverlayUI(self.fullParser, 
+                                                                                        self.overlayFontSize,
+                                                                                        self.overlayFontName,
+                                                                                        self.overlayPositionX,
+                                                                                        self.overlayPositionY
+                                                                                        )
             self.toggleOverlayButton.configure(text = StringConstants.closeOverlayString)
         else:
             self.fullParser.overlayWindow.overlayWindow.destroy()
@@ -859,6 +870,8 @@ class AppUI:
             self.fontSizeInputBox.delete('0.0', 'end')
             self.fontSizeInputBox.insert('end', "")
             
+        self.fullParser.updateConfigFile("Overlay", "overlayfontsize", str(self.overlayFontSize))
+        
         if(self.fullParser.overlayWindow != None):
             self.fullParser.overlayWindow.updateThingsBasedOnNewFontSize(self.overlayFontSize)
             

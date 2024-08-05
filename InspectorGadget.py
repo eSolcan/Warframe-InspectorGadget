@@ -93,15 +93,18 @@ class FullParser:
         
         self.overlayWindow = None
 
-        # Class that manages all UI elements
-        self.appUI = AppUI(self, 
-                           self.app, 
-                           self.overlayWindow,
-                           self.configSettings.getint("Overlay", "overlayfontsize"), 
-                           self.configSettings.get("Overlay", "overlayfontname"), 
-                           self.configSettings.getint("Overlay", "overlayposx"), 
-                           self.configSettings.getint("Overlay", "overlayposy")
-                           )
+        # UI
+        try:
+            self.appUI = AppUI(self, 
+                                   self.app, 
+                                   self.overlayWindow, 
+                                   self.configSettings.getint("Overlay", "overlayfontsize"),
+                                   self.configSettings.get("Overlay", "overlayfontname"),
+                                   self.configSettings.getint("Overlay", "overlayposx"),
+                                   self.configSettings.getint("Overlay", "overlayposy")
+                                   )
+        except:
+            self.appUI = AppUI(self, self.app, self.overlayWindow, 12, "Arial", 1920/4, 1920/4)
         
         # Misc variables
         self.currentRoundShown = -1
@@ -130,13 +133,16 @@ class FullParser:
         self.connection.startConnection()
         
     def updateConfigFile(self, section, param, newValue):
-        self.configSettings.set(section, param, newValue)
+        try:
+            self.configSettings.set(section, param, newValue)
+        except:
+            self.configSettings['Overlay'] = {'overlayfontsize' : 14, 'overlayfontname' : 'Arial', 'overlayposx' : 1920/4, 'overlayposy' : 1080/4}
         
         # Write the configuration to a file
         with open(self.configFileName, 'w') as configfile:
             self.configSettings.write(configfile)
             
-        configfile.close()            
+        configfile.close()       
         
     # Open url in web browser
     def openInBrowser(url):
@@ -728,14 +734,14 @@ class FullParser:
             while StringConstants.newLineString in line:
                 
                 # Check for toxin weapons, play sound of true
-                # if StringConstants.disruptionToxinPylon in line:
-                #     if(self.playToxinSound):
-                #         try:
-                #             playsound(resource_pathAnnoying(r'soundtoxin.mp3'))
-                #         except Exception as error:
-                #             logging.error("Broke on trying to play toxin sound: \n")
-                #             logging.error(error)
-                #             print(error)
+                if StringConstants.disruptionToxinPylon in line:
+                    if(self.playToxinSound):
+                        try:
+                            playsound(resource_pathAnnoying(r'soundtoxin.mp3'))
+                        except Exception as error:
+                            logging.error("Broke on trying to play toxin sound: \n")
+                            logging.error(error)
+                            print(error)
                             
 
                 # Search for various milestones along each round

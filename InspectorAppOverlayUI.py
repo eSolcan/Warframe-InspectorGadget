@@ -39,10 +39,10 @@ class InspectorAppOverlayUI:
         self.overlayWindow.geometry("%dx%d+%d+%d" % (self.overlayWidth, self.overlayHeight, posX, posY))
 
         self.overlayWindow.overrideredirect(True)
-        self.overlayWindow.config(bg='#00FF00')
+        self.overlayWindow.config(bg = '#ff00ff')
         self.overlayWindow.attributes("-alpha", 1)
         self.overlayWindow.wm_attributes("-topmost", 1)
-        self.overlayWindow.attributes('-transparentcolor', '#00FF00', '-topmost', 1)
+        self.overlayWindow.attributes('-transparentcolor', '#ff00ff', '-topmost', 1)
         
         self.overlayLocked = False
 
@@ -138,5 +138,8 @@ class InspectorAppOverlayUI:
         self.overlayFontSize = newFontSize
                     
         self.overlayLabel.configure(font = (self.fontName, self.overlayFontSize))
+        
+    def updateInterfaceForToxin(self, toxinColor):
+        self.overlayLabel.configure(bg = toxinColor)
         
       

@@ -41,6 +41,10 @@ class AppUI:
     buttonRedColorHover = "red"
     buttonGreenColor = "green"
     buttonGreenColorHover = "#14701D"
+    
+    toxinColor = "#00ff00"
+    defaultWindowColor = "gray17"
+    defaultOverlayColor = "black"
 
     # Line and Column values for various UI elements
     columnRelValues = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99]
@@ -54,12 +58,11 @@ class AppUI:
     
     displayInKappaMode = False
 
-    def __init__(self, fullClass, app, overlayWindow, fontSize, fontName, posX, posY) -> None:
+    def __init__(self, fullClass, app, fontSize, fontName, posX, posY) -> None:
         
         self.fullParser = fullClass
 
         self.app = app
-        self.overlayWindow = overlayWindow
         self.overlayFontSize = fontSize
         try:
             self.overlayFontName = fontName
@@ -877,3 +880,15 @@ class AppUI:
             
         # Force edit modified back to default false, otherwise new edit detections don't get caught
         self.fontSizeInputBox.edit_modified(False)
+        
+    def updateInterfaceForToxin(self, toxinBool):
+        if(toxinBool):
+            # self.analyzerWindow.configure(fg_color = self.toxinColor)
+            if(self.fullParser.overlayWindow != None):
+                self.fullParser.overlayWindow.updateInterfaceForToxin(self.toxinColor)
+                self.fullParser.app.after(10000, self.updateInterfaceForToxin, False)
+        else:
+            # self.analyzerWindow.configure(fg_color = self.defaultWindowColor)
+            if(self.fullParser.overlayWindow != None):
+                self.fullParser.overlayWindow.updateInterfaceForToxin(self.defaultOverlayColor)
+            

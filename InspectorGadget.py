@@ -57,7 +57,7 @@ class FullParser:
         self.playToxinSound = True
         
         # Settings/Config/DB file
-        self.configFileName = 'config.ini'
+        self.configFileName = 'configInspector.ini'
         self.configSettings = configparser.ConfigParser()
         
         # Read config file
@@ -88,8 +88,7 @@ class FullParser:
         self.app.geometry("%dx%d+%d+%d" % (960, 512, 1920/4, 1080/4))
         
         self.app.title("InspectorGadget")
-        self.app.iconbitmap(appLogo)
-        # self.app.attributes('-topmost', True)    
+        self.app.iconbitmap(appLogo)  
         
         self.overlayWindow = None
 
@@ -97,14 +96,13 @@ class FullParser:
         try:
             self.appUI = AppUI(self, 
                                    self.app, 
-                                   self.overlayWindow, 
                                    self.configSettings.getint("Overlay", "overlayfontsize"),
                                    self.configSettings.get("Overlay", "overlayfontname"),
                                    self.configSettings.getint("Overlay", "overlayposx"),
                                    self.configSettings.getint("Overlay", "overlayposy")
                                    )
         except:
-            self.appUI = AppUI(self, self.app, self.overlayWindow, 12, "Arial", 1920/4, 1920/4)
+            self.appUI = AppUI(self, self.app, 12, "Arial", 1920/4, 1920/4)
         
         # Misc variables
         self.currentRoundShown = -1
@@ -733,16 +731,15 @@ class FullParser:
         else:
             while StringConstants.newLineString in line:
                 
-                # Check for toxin weapons, play sound of true
+                # Check for toxin weapons, change UI color for duration (10s)
                 if StringConstants.disruptionToxinPylon in line:
                     if(self.playToxinSound):
-                        try:
-                            playsound(resource_pathAnnoying(r'soundtoxin.mp3'))
-                        except Exception as error:
-                            logging.error("Broke on trying to play toxin sound: \n")
-                            logging.error(error)
-                            print(error)
-                            
+                        self.appUI.updateInterfaceForToxin(True)
+                        
+                        clientDataToSend = DataForClients()
+                        clientDataToSend.isToxin = True
+                        JSONData = json.dumps(clientDataToSend, indent=4, cls=DisruptionJsonEncoder)
+                        self.connection.publishMessage(JSONData)
 
                 # Search for various milestones along each round
                 # Run time start
@@ -1014,6 +1011,7 @@ class DataForClients:
         self.currentAvg = ""
         self.bestRound = ""
         self.expectedEnd = ""
+        self.isToxin = False
         
         self.missionName = ""
         self.tiles = ""

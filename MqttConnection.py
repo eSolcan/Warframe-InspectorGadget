@@ -55,11 +55,13 @@ class MqttConnection:
                 self.appUi.resetDisplay()
                 if(self.fullParser.overlayWindow != None):
                     self.fullParser.overlayWindow.updateOverlayWithTextRaw(StringConstants.orbiterResetOverlayDisplayString)
-            elif(receivedDataJson["missionName"] != ""):
+            
+            if(receivedDataJson["missionName"] != ""):
                 self.appUi.displayMissionAndTiles(receivedDataJson["missionName"], receivedDataJson["tiles"], receivedDataJson["goodTilesBoolean"])
                 if(self.fullParser.overlayWindow != None):
                     self.fullParser.overlayWindow.updateOverlayWithTextRaw(receivedDataJson["tiles"])
-            elif(receivedDataJson["totalRoundTimeInSeconds"] != ""):
+            
+            if(receivedDataJson["totalRoundTimeInSeconds"] != ""):
                 if(not self.appUi.displayInKappaMode):
                     self.fullParser.app.after(50, self.appUi.updateUIForDisruptionLogging)
                 
@@ -74,4 +76,6 @@ class MqttConnection:
                     else:
                         self.fullParser.overlayWindow.displayDisruptionRoundData(receivedDataJson["totalRoundTimeInSeconds"], receivedDataJson["expectedEnd"])
             
+            if(receivedDataJson["isToxin"]):
+                self.fullParser.appUI.updateInterfaceForToxin(True)
         

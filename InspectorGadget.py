@@ -271,7 +271,8 @@ class FullParser:
         # Open file if first time going through
         try:
             if self.file == None:
-                self.file = open(self.filename, 'r', encoding='latin-1')
+                # self.file = open(self.filename, 'r', encoding='latin-1')
+                self.file = open(self.filename, 'r', encoding='utf-8')
         except:
             # If no file, keep trying
             self.app.after(self.sleepBetweenCalls, self.startParsing)
@@ -356,7 +357,23 @@ class FullParser:
                             return
 
                         scanDisruption = True
-                    elif StringConstants.tuvulCommonsZariman in line:
+                    
+                    elif any(x in line for x in StringConstants.disruptionMissionNamesRussian):
+                        if StringConstants.kappaSednaRussian in self.currentMission or StringConstants.urUranusRussian in self.currentMission:
+                            self.currentMissionTileString = StringConstants.kappaGrineerIntermediateString
+                            self.badTileList = self.appUI.kappaRegBadList
+                        elif StringConstants.apolloLuaRussian in self.currentMission:
+                            self.currentMissionTileString = StringConstants.apolloMoonIntString
+                            self.badTileList = self.appUI.apolloRegBadList
+                        elif StringConstants.olympusMarsRussian in self.currentMission:
+                            self.currentMissionTileString = StringConstants.olympusCmpString
+                            self.badTileList = self.appUI.olympusRegBadList
+                        else:
+                            return
+
+                        scanDisruption = True    
+                    
+                    elif StringConstants.tuvulCommonsZariman in line or StringConstants.tuvulCommonsZarimanRussian in line :
                         scanCascade = True
                     else:
                         doneHere = True
@@ -420,17 +437,6 @@ class FullParser:
                     doneHere = True
                     break
                 
-                elif (StringConstants.assurUranus in self.currentMission and StringConstants.assurGoodTileString in line and not self.missionLoadEndReached):
-                    self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextFoundString, text_color = self.appUI.textColorGreen)
-                    self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
-
-                    if self.loggingState:
-                        logging.info("Found specific tile in line for mission " + self.currentMission + ". Line: " + line)
-
-                    self.missionLoadEndReached = True
-                    doneHere = True
-                    break
-
                 # End of mission load, means all the layout has been parsed and found, will simply continue parsing until Orbiter Reset is found
                 elif (StringConstants.endOfMissionLoadString in line and not self.missionLoadEndReached):
                     if self.loggingState:

@@ -23,9 +23,7 @@ class StringConstants:
 
     # Various mission names
     missionNameString = "ThemedSquadOverlay.lua: Mission name:"
-    zabalaEris = "Zabala (Eris)"
-    nimusEris = "Nimus (Eris)"
-    assurUranus = "Assur (Uranus)"
+    # assurUranus = "Assur (Uranus)"
     opheliaUranus = "Ophelia (Uranus)"
     kappaSedna = "Kappa (Sedna)"
     apolloLua = "Apollo (Lua)"
@@ -33,8 +31,16 @@ class StringConstants:
     copernicusLua = "Copernicus (Lua)"
     tuvulCommonsZariman = "Tuvul Commons (Zariman)"
     olympusMars = "Olympus (Mars)"
+    
+    kappaSednaRussian = "Kappa (Седна)"
+    apolloLuaRussian = "Apollo (Луа)"
+    olympusMarsRussian = "Olympus (Марс)"
+    urUranusRussian = "Ur (Уран)"
+    
+    tuvulCommonsZarimanRussian = "Палаты Тувула (Зариман)"
 
     disruptionMissionNames = [kappaSedna, apolloLua, olympusMars, urUranus]
+    disruptionMissionNamesRussian = [kappaSednaRussian, apolloLuaRussian, olympusMarsRussian, urUranusRussian]
 
     # Tile names for nano and poly farming
     nanoGoodTileString = "Layer /Lotus/Levels/InfestedCorpus/InfestedReactor"

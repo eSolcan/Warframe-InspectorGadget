@@ -437,6 +437,17 @@ class FullParser:
                     doneHere = True
                     break
                 
+                elif (StringConstants.assurUranus in self.currentMission and StringConstants.assurGoodTileString in line and not self.missionLoadEndReached):
+                    self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextFoundString, text_color = self.appUI.textColorGreen)
+                    self.appUI.missionNameDisplay.configure(text = StringConstants.appWillResetIn30sString)
+
+                    if self.loggingState:
+                        logging.info("Found specific tile in line for mission " + self.currentMission + ". Line: " + line)
+
+                    self.missionLoadEndReached = True
+                    doneHere = True
+                    break
+                
                 # End of mission load, means all the layout has been parsed and found, will simply continue parsing until Orbiter Reset is found
                 elif (StringConstants.endOfMissionLoadString in line and not self.missionLoadEndReached):
                     if self.loggingState:

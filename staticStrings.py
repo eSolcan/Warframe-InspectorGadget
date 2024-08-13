@@ -23,7 +23,7 @@ class StringConstants:
 
     # Various mission names
     missionNameString = "ThemedSquadOverlay.lua: Mission name:"
-    # assurUranus = "Assur (Uranus)"
+    assurUranus = "Assur (Uranus)"
     opheliaUranus = "Ophelia (Uranus)"
     kappaSedna = "Kappa (Sedna)"
     apolloLua = "Apollo (Lua)"
@@ -167,7 +167,7 @@ class StringConstants:
     selectBadTilesApolloString = "Bad tiles (Apollo):"
     selectBadTilesOlympusString = "Bad tiles (Olympus):"
 
-    whatIsBeingParsedText = "Parsing:\nDisruption\nCascade\nZabala - Nano\nOphelia - Poly"
+    whatIsBeingParsedText = "Parsing:\nDisruption\nCascade\nOphelia - Poly\nAssur - Poly"
 
     discordTagString = "@wtb_username"
 

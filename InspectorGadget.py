@@ -37,6 +37,8 @@ class FullParser:
         self.currentVersion = "1.4.0"
 
         self.currentMissionTileString = None
+        self.currentMission = None
+        self.currentMissionSolNode = None
         self.badTileList = None
 
         # Logging status
@@ -342,38 +344,24 @@ class FullParser:
                     self.appUI.missionNameDisplay.configure(text = self.currentMission)
                     self.appUI.foundTileDisplay.configure(text = StringConstants.searchingTextString)
 
+                elif StringConstants.missionSolNodeHostLoadinString in line:                    
                     # If doing disruption, will go to a different parser function
                     if any(x in line for x in StringConstants.disruptionMissionNames):
-                        if StringConstants.kappaSedna in self.currentMission or StringConstants.urUranus in self.currentMission:
+                        if StringConstants.kappaSedna in line or StringConstants.urUranus in line:
                             self.currentMissionTileString = StringConstants.kappaGrineerIntermediateString
                             self.badTileList = self.appUI.kappaRegBadList
-                        elif StringConstants.apolloLua in self.currentMission:
+                        elif StringConstants.apolloLua in line:
                             self.currentMissionTileString = StringConstants.apolloMoonIntString
                             self.badTileList = self.appUI.apolloRegBadList
-                        elif StringConstants.olympusMars in self.currentMission:
+                        elif StringConstants.olympusMars in line:
                             self.currentMissionTileString = StringConstants.olympusCmpString
                             self.badTileList = self.appUI.olympusRegBadList
                         else:
                             return
 
-                        scanDisruption = True
+                        scanDisruption = True 
                     
-                    elif any(x in line for x in StringConstants.disruptionMissionNamesRussian):
-                        if StringConstants.kappaSednaRussian in self.currentMission or StringConstants.urUranusRussian in self.currentMission:
-                            self.currentMissionTileString = StringConstants.kappaGrineerIntermediateString
-                            self.badTileList = self.appUI.kappaRegBadList
-                        elif StringConstants.apolloLuaRussian in self.currentMission:
-                            self.currentMissionTileString = StringConstants.apolloMoonIntString
-                            self.badTileList = self.appUI.apolloRegBadList
-                        elif StringConstants.olympusMarsRussian in self.currentMission:
-                            self.currentMissionTileString = StringConstants.olympusCmpString
-                            self.badTileList = self.appUI.olympusRegBadList
-                        else:
-                            return
-
-                        scanDisruption = True    
-                    
-                    elif StringConstants.tuvulCommonsZariman in line or StringConstants.tuvulCommonsZarimanRussian in line :
+                    elif StringConstants.tuvulCommonsZariman in line:
                         scanCascade = True
                     else:
                         doneHere = True

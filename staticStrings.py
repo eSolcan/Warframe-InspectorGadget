@@ -23,24 +23,37 @@ class StringConstants:
 
     # Various mission names
     missionNameString = "ThemedSquadOverlay.lua: Mission name:"
-    assurUranus = "Assur (Uranus)"
-    opheliaUranus = "Ophelia (Uranus)"
-    kappaSedna = "Kappa (Sedna)"
-    apolloLua = "Apollo (Lua)"
-    urUranus = "Ur (Uranus)"
+    missionSolNodeHostLoadinString = "ThemedSquadOverlay.lua: Host loading"
+    
     copernicusLua = "Copernicus (Lua)"
-    tuvulCommonsZariman = "Tuvul Commons (Zariman)"
-    olympusMars = "Olympus (Mars)"
+    assurUranus = "ClanNode17"
+    opheliaUranus = "SolNode69"
     
-    kappaSednaRussian = "Kappa (Седна)"
-    apolloLuaRussian = "Apollo (Луа)"
-    olympusMarsRussian = "Olympus (Марс)"
-    urUranusRussian = "Ur (Уран)"
+    kappaSedna = "SolNode177"
+    apolloLua = "SolNode308"
+    urUranus = "ClanNode16"
+    olympusMars = "SolNode30"
+    tuvulCommonsZariman = "SolNode232"
     
-    tuvulCommonsZarimanRussian = "Палаты Тувула (Зариман)"
-
     disruptionMissionNames = [kappaSedna, apolloLua, olympusMars, urUranus]
-    disruptionMissionNamesRussian = [kappaSednaRussian, apolloLuaRussian, olympusMarsRussian, urUranusRussian]
+    
+    # assurUranus = "Assur (Uranus)"
+    # copernicusLua = "Copernicus (Lua)"
+    
+    # opheliaUranus = "Ophelia (Uranus)"
+    # kappaSedna = "Kappa (Sedna)"
+    # apolloLua = "Apollo (Lua)"
+    # urUranus = "Ur (Uranus)"
+    # olympusMars = "Olympus (Mars)"
+    # tuvulCommonsZariman = "Tuvul Commons (Zariman)"
+    
+    # kappaSednaRussian = "Kappa (Седна)"
+    # apolloLuaRussian = "Apollo (Луа)"
+    # olympusMarsRussian = "Olympus (Марс)"
+    # urUranusRussian = "Ur (Уран)"
+    # tuvulCommonsZarimanRussian = "Палаты Тувула (Зариман)"
+
+    # disruptionMissionNamesRussian = [kappaSednaRussian, apolloLuaRussian, olympusMarsRussian, urUranusRussian]
 
     # Tile names for nano and poly farming
     nanoGoodTileString = "Layer /Lotus/Levels/InfestedCorpus/InfestedReactor"

@@ -350,12 +350,20 @@ class FullParser:
                         if StringConstants.kappaSedna in line or StringConstants.urUranus in line:
                             self.currentMissionTileString = StringConstants.kappaGrineerIntermediateString
                             self.badTileList = self.appUI.kappaRegBadList
+                            
+                            if StringConstants.kappaSedna in line:
+                                self.currentMissionSolNode = StringConstants.kappaSedna
+                            else:
+                                self.currentMissionSolNode = StringConstants.urUranus
+                                
                         elif StringConstants.apolloLua in line:
                             self.currentMissionTileString = StringConstants.apolloMoonIntString
                             self.badTileList = self.appUI.apolloRegBadList
+                            self.currentMissionSolNode = StringConstants.apolloLua
                         elif StringConstants.olympusMars in line:
                             self.currentMissionTileString = StringConstants.olympusCmpString
                             self.badTileList = self.appUI.olympusRegBadList
+                            self.currentMissionSolNode = StringConstants.olympusMars
                         else:
                             return
 
@@ -363,6 +371,7 @@ class FullParser:
                     
                     elif StringConstants.tuvulCommonsZariman in line:
                         scanCascade = True
+                        self.currentMissionSolNode = StringConstants.tuvulCommonsZariman
                     else:
                         doneHere = True
 
@@ -627,7 +636,7 @@ class FullParser:
                     
                     if(not self.missionLoadEndReached):
                         # Stupid ass olympus got changed in Jade update, need to check all tiles in it
-                        if StringConstants.olympusMars in self.currentMission:
+                        if StringConstants.olympusMars in self.currentMissionSolNode:
                             for x in StringConstants.olympusList:
                                 if x in tempLine:
                                     self.disruptionTilesFoundList.append(tempLine) 

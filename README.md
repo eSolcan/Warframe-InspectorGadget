@@ -1,3 +1,9 @@
+<span style="color:red; font-weight: bold; font-size: 50px;">DEAD</span>
+<span style="color:red; font-weight: bold; font-size: 30px;">13/11/2024 U37.0.9
+As of this update, InspectorGadget is OBSOLETE.
+Tiles have been hidden behind a new script, and thus can't be parsed. GG</span>
+<span style="color:black; font-size: 4px; vertical-align: super">thanks DE</span>
+
 # InspectorGadget
 
 Simple EE.log parser used to search for various mission tilesets, as well as analyze Disruption runs, both real time or post run. Download it from [Releases](https://github.com/eSolcan/Warframe-InspectorGadget/releases/latest) -  InspectorGadget.zip file, .exe contained inside.

@@ -1,8 +1,7 @@
-<span style="color:red; font-weight: bold; font-size: 50px;">DEAD</span>
-<span style="color:red; font-weight: bold; font-size: 30px;">13/11/2024 U37.0.9
-As of this update, InspectorGadget is OBSOLETE.
-Tiles have been hidden behind a new script, and thus can't be parsed. GG</span>
-<span style="color:black; font-size: 4px; vertical-align: super">thanks DE</span>
+# DEAD - 13/11/2024 U37.0.9
+## As of this update, InspectorGadget is OBSOLETE. 
+Tiles have been hidden behind a new script, and thus can't be parsed. GG
+<sup><sup><sup><sup><sup>*thanks DE*</sup></sup></sup></sup></sup>
 
 # InspectorGadget
 
